@@ -1,0 +1,2033 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap');
+    body { margin: 0; padding: 0; background: white; font-family: 'Open Sans', Arial, sans-serif; background: #f0f0f0; }
+    a { color: #1e3a6e; text-decoration: none; }
+    a:hover { text-decoration: underline; color: #1e3a6e; }
+    @keyframes bha-pulse { 0%,100% { box-shadow: inset 0 0 0 2px #dc2626; } 50% { box-shadow: inset 0 0 0 2px rgba(220,38,38,0.3); } }
+    .cmt-row .cmt-del { opacity: 0; transition: opacity 0.12s; }
+    .cmt-row:hover .cmt-del { opacity: 1; }
+    .cmt-row:hover { background: #f2f4f8; }
+    @media print { .dec-note, .run-row { break-inside: avoid; } }
+  </style>
+</helmet>
+
+<!-- PROTOTYPE BAR -->
+<div style="background: #2d2d2d; color: #bbb; height: 34px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; font-size: 12px;">
+  <span style="letter-spacing: 0.5px; font-weight: 600;">PROTOTYPE</span>
+  <div style="display: flex; gap: 8px;">
+    <button onClick="{{ protoFirstTime }}" style="background: #444; color: white; border: 1px solid #666; padding: 5px 12px; font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 3px;">First-time experience for privileges</button>
+    <button onClick="{{ protoFirstTimeComments }}" style="background: #444; color: white; border: 1px solid #666; padding: 5px 12px; font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 3px;">First-time experience for horse comments</button>
+    <button onClick="{{ protoCoach }}" style="background: #444; color: white; border: 1px solid #666; padding: 5px 12px; font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 3px;">Customise card tip</button>
+  </div>
+</div>
+
+<div style="margin-left: {{ mainMarginRight }}; transition: margin-left 0.25s ease;">
+<!-- NAV -->
+<div style="background: #1e3a6e; color: white; height: 50px; display: flex; align-items: center; padding: 0 20px; gap: 16px; justify-content: space-between;">
+  <div style="display: flex; align-items: center; gap: 10px;">
+    <div style="width: 36px; height: 36px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+      <svg width="36" height="36" viewBox="0 0 36 36"><circle cx="18" cy="18" r="18" fill="#1e3a6e"></circle><text x="18" y="23" text-anchor="middle" fill="white" font-size="10" font-weight="800" font-family="Arial">BHA</text></svg>
+    </div>
+    <span style="font-weight: 800; font-size: 15px; letter-spacing: 1px;">STEWARDS</span>
+  </div>
+  <div style="display: flex; align-items: center; gap: 24px; font-size: 13px;">
+    <span style="display: flex; align-items: center; gap: 5px; cursor: pointer;">📄 Stewards Report</span>
+    <span style="display: flex; align-items: center; gap: 5px; cursor: pointer;">⇄ Change Fixture</span>
+    <span style="position: relative; display: flex; align-items: center;">
+      <span onClick="{{ toggleLinksMenu }}" style="display: flex; align-items: center; gap: 5px; cursor: pointer;">External Links ▼</span>
+      <sc-if value="{{ linksMenuOpen }}" hint-placeholder-val="{{ false }}">
+        <span onClick="{{ closeMenus }}" style="position: fixed; inset: 0; z-index: 80;"></span>
+        <span style="position: absolute; top: calc(100% + 12px); left: -20px; z-index: 81; background: white; border: 1px solid #ddd; border-radius: 6px; box-shadow: 0 10px 28px rgba(0,0,0,0.18); padding: 6px; width: 300px; display: flex; flex-direction: column;">
+          <sc-for list="{{ externalLinks }}" as="a" hint-placeholder-count="6">
+            <button onClick="{{ a.run }}" style="background: none; border: none; text-align: left; padding: 9px 10px; font-size: 13px; font-weight: 600; color: #111; cursor: pointer; border-radius: 4px;" style-hover="background: #f2f4f8;">{{ a.label }}</button>
+          </sc-for>
+        </span>
+      </sc-if>
+    </span>
+    <span style="display: flex; align-items: center; gap: 5px; cursor: pointer;">→ Logout</span>
+  </div>
+</div>
+
+<div>
+<!-- PAGE HEADER -->
+<div style="background: white; padding: 18px 24px 14px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e0e0e0;">
+  <div style="font-size: 24px; font-weight: 800; color: #111;">LINGFIELD PARK – July 6, 2026</div>
+  <div style="display: flex; align-items: center; gap: 10px; flex-shrink: 0;">
+    <button onClick="{{ openRulesDrawer }}" title="Rules smart search" style="background: white; border: 1px solid #ccc; border-radius: 5px; padding: 8px 14px; font-size: 13px; font-weight: 700; color: #111; cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap;">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1e3a6e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="M21 21l-4.35-4.35"></path></svg>
+      Rules search
+    </button>
+    <div style="position: relative;">
+    <button onClick="{{ toggleFixtureMenu }}" style="background: #dc2626; color: white; border: none; padding: 8px 16px; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap;">Fixture actions ▼</button>
+    <sc-if value="{{ fixtureMenuOpen }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ closeMenus }}" style="position: fixed; inset: 0; z-index: 80;"></div>
+      <div style="position: absolute; top: calc(100% + 6px); right: 0; z-index: 81; background: white; border: 1px solid #ddd; border-radius: 6px; box-shadow: 0 10px 28px rgba(0,0,0,0.18); padding: 6px; width: 240px; display: flex; flex-direction: column;">
+        <sc-for list="{{ fixtureActions }}" as="a" hint-placeholder-count="6">
+          <button onClick="{{ a.run }}" style="background: none; border: none; text-align: left; padding: 9px 10px; font-size: 13px; font-weight: 600; color: #111; cursor: pointer; border-radius: 4px;" style-hover="background: #f2f4f8;">{{ a.label }}</button>
+        </sc-for>
+      </div>
+    </sc-if>
+    </div>
+  </div>
+</div>
+
+<!-- RACE TIME TABS -->
+<div style="background: white; display: flex; border-bottom: 2px solid #e0e0e0; overflow-x: auto;">
+  <sc-for list="{{ mainRaceTabs }}" as="mt" hint-placeholder-count="7">
+    <button onClick="{{ mt.select }}" style="background: {{ mt.bg }}; color: {{ mt.color }}; border: none; border-right: 1px solid #e0e0e0; border-bottom: 3px solid {{ mt.borderColor }}; padding: 10px 28px; font-weight: 700; font-size: 14px; cursor: pointer; white-space: nowrap; font-family: inherit;">{{ mt.label }}</button>
+  </sc-for>
+</div>
+
+<!-- RACE TITLE BAR -->
+<div style="background: white; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e0e0e0;">
+  <div style="font-size: 15px; font-weight: 700; color: #111; display: flex; align-items: center; gap: 8px;">
+    <span style="font-size: 16px;">⏱</span>
+    {{ activeRaceHeaderTitle }}
+    <button onClick="{{ toggleRaceInfo }}" style="background: none; border: none; padding: 2px 4px; font-size: 12px; font-weight: 700; color: #1e3a6e; cursor: pointer; white-space: nowrap;">{{ raceInfoLabel }}</button>
+  </div>
+  <div style="position: relative; flex-shrink: 0;">
+    <button onClick="{{ toggleRaceMenu }}" style="background: #1e3a6e; color: white; border: none; padding: 8px 14px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap;">Race Actions ▼</button>
+    <sc-if value="{{ raceMenuOpen }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ closeMenus }}" style="position: fixed; inset: 0; z-index: 80;"></div>
+      <div style="position: absolute; top: calc(100% + 6px); right: 0; z-index: 81; background: white; border: 1px solid #ddd; border-radius: 6px; box-shadow: 0 10px 28px rgba(0,0,0,0.18); padding: 6px; width: 220px; display: flex; flex-direction: column;">
+        <sc-for list="{{ raceActions }}" as="a" hint-placeholder-count="6">
+          <button onClick="{{ a.run }}" style="background: none; border: none; text-align: left; padding: 9px 10px; font-size: 13px; font-weight: 600; color: #111; cursor: pointer; border-radius: 4px;" style-hover="background: #f2f4f8;">{{ a.label }}</button>
+        </sc-for>
+      </div>
+    </sc-if>
+  </div>
+</div>
+
+<!-- RACE INFO PANEL -->
+<sc-if value="{{ raceInfoOpen }}" hint-placeholder-val="{{ false }}">
+  <div style="background: #f7f9fc; border-bottom: 1px solid #e0e0e0; padding: 12px 24px 14px;">
+    <div style="font-size: 12.5px; font-weight: 700; color: #111; margin-bottom: 10px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px;">
+      <span>Race Info – {{ activeRaceTimeLabel }}</span>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 6px 32px; max-width: 900px;">
+      <sc-for list="{{ raceInfoRows }}" as="ri" hint-placeholder-count="8">
+        <div style="font-size: 12.5px; color: #555; line-height: 1.6;">{{ ri.label }} <span style="color: {{ ri.valueColor }}; font-weight: 600;">{{ ri.value }}</span></div>
+      </sc-for>
+    </div>
+  </div>
+</sc-if>
+
+<!-- FILTER TOOLBAR -->
+<div style="position: relative; background: white; padding: 12px 24px; border-bottom: 1px solid #e0e0e0;">
+  <div style="display: flex; gap: 10px;">
+    <button onClick="{{ toggleHideOpen }}" style="background: white; border: 1px solid {{ hideButtonBorder }}; border-radius: 5px; padding: 8px 14px; font-size: 13px; font-weight: 700; color: #111; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1e3a6e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"></path><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"></path><path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+      Hide
+    </button>
+    <div style="position: relative;">
+    <button onClick="{{ openPriv }}" title="Customise card" style="background: white; border: 1px solid {{ customiseBtnBorder }}; border-radius: 5px; padding: 8px 12px; font-size: 13px; font-weight: 700; color: #111; cursor: pointer; display: flex; align-items: center; gap: 7px;">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1e3a6e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.01a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.01a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.01a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+      Customise card
+    </button>
+
+    <sc-if value="{{ coachOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="position: absolute; top: calc(100% + 10px); left: 0; z-index: 70; width: 360px; background: white; border: 2px solid #1e3a6e; border-radius: 8px; box-shadow: 0 14px 36px rgba(0,0,0,0.22); overflow: hidden;">
+        <div style="position: absolute; top: -8px; left: 26px; width: 12px; height: 12px; background: white; border-left: 2px solid #1e3a6e; border-top: 2px solid #1e3a6e; transform: rotate(45deg);"></div>
+        <button onClick="{{ dismissCoach }}" style="position: absolute; top: 8px; right: 8px; background: rgba(255,255,255,0.9); border: none; font-size: 16px; line-height: 1; color: #555; cursor: pointer; padding: 3px 6px; border-radius: 4px; z-index: 2;">×</button>
+
+        <div style="background: #f2f4f8; padding: 16px; display: flex; flex-direction: column; gap: 8px;">
+          <div style="background: white; border: 1px solid #e0e0e0; border-radius: 4px; padding: 9px 10px; display: flex; align-items: center; gap: 10px;">
+            <div style="width: 26px; height: 26px; border-radius: 4px; background: #1a3a7a; flex-shrink: 0;"></div>
+            <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px;">
+              <div style="height: 7px; width: 62%; background: #dfe4ec; border-radius: 3px;"></div>
+              <div style="display: flex; gap: 4px;">
+                <span style="background: #dc2626; color: white; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 3px;">RH</span>
+                <span style="background: #eef2fa; color: #1e3a6e; border: 1px solid #d6def0; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 3px;">TT</span>
+                <span style="background: #dc2626; color: white; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 3px;">SR</span>
+              </div>
+            </div>
+          </div>
+          <div style="background: white; border: 1px dashed #9fb0cc; border-radius: 4px; padding: 9px 10px; display: flex; align-items: center; gap: 10px; opacity: 0.75;">
+            <div style="width: 26px; height: 26px; border-radius: 4px; background: #c9d3e5; flex-shrink: 0;"></div>
+            <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px;">
+              <div style="height: 7px; width: 48%; background: #e5e9f0; border-radius: 3px;"></div>
+              <div style="height: 7px; width: 30%; background: #e5e9f0; border-radius: 3px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="padding: 14px 16px 16px;">
+          <div style="font-size: 14.5px; font-weight: 800; color: #111; margin-bottom: 6px;">Customise your race card</div>
+          <div style="font-size: 12.5px; color: #555; line-height: 1.55; margin-bottom: 14px; text-wrap: pretty;">Choose which privileges, declared items and horse comments appear on every runner — set your own abbreviations, colours and how much detail shows.</div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <button onClick="{{ coachOpenPanel }}" style="background: #1e3a6e; color: white; border: none; padding: 9px 16px; font-size: 12.5px; font-weight: 700; cursor: pointer; border-radius: 4px;">Show me</button>
+            <button onClick="{{ dismissCoach }}" style="background: none; border: none; color: #666; font-size: 12.5px; font-weight: 600; cursor: pointer; padding: 9px 4px;">Not now</button>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+    </div>
+  </div>
+
+  <sc-if value="{{ hideOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ toggleHideOpen }}" style="position: fixed; inset: 0; z-index: 40;"></div>
+    <div style="position: absolute; top: 100%; left: 0; margin-top: 6px; background: white; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); z-index: 41; padding: 10px; width: 200px;">
+      <sc-for list="{{ hideColumns }}" as="col" hint-placeholder-count="4">
+        <label style="display: flex; align-items: center; gap: 8px; padding: 6px 4px; cursor: pointer; font-size: 13px; color: #222;">
+          <input type="checkbox" checked="{{ col.visible }}" onChange="{{ col.toggle }}"/>
+          <span>{{ col.label }}</span>
+        </label>
+      </sc-for>
+    </div>
+  </sc-if>
+</div>
+
+<!-- RUNNERS TABLE -->
+<div style="background: white; margin: 0; overflow: auto; max-height: calc(100vh - 260px); position: relative;">
+  <sc-if value="{{ savedNoteImg }}" hint-placeholder-val="{{ false }}">
+    <img ref="{{ setThumbRef }}" style="position: absolute; top: 0; left: 0; width: 1100px; height: 100%; object-fit: fill; pointer-events: none; z-index: 6; mix-blend-mode: multiply;"/>
+  </sc-if>
+  <div style="display: grid; grid-template-columns: {{ gridCols }}; min-width: 1100px; align-items: center; padding: 6px 12px 6px 16px; background: #f7f7f7; border-bottom: 1px solid #ddd; font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.5px; position: sticky; top: 0; z-index: 5;">
+    <sc-for list="{{ headerCols }}" as="hc" hint-placeholder-count="8">
+      <div style="position: relative; padding-right: 8px;">
+        {{ hc.head }}
+        <div onPointerDown="{{ hc.startResize }}" title="Drag to resize column" style="position: absolute; top: -6px; bottom: -6px; right: -3px; width: 8px; cursor: col-resize; z-index: 6;">
+          <div style="position: absolute; top: 0; bottom: 0; left: 3px; width: 2px; background: #ddd;"></div>
+        </div>
+      </div>
+    </sc-for>
+    <div></div>
+  </div>
+
+  <sc-for list="{{ runners }}" as="r" hint-placeholder-count="11">
+    <div id="run-row-{{ r.draw }}" onClick="{{ r.rowClick }}" style="display: grid; grid-template-columns: {{ gridCols }}; min-width: 1100px; align-items: center; padding: 14px 12px 14px 16px; border-bottom: 1px solid #e8e8e8; background: {{ r.rowBg }}; position: relative; cursor: {{ r.rowCursor }};">
+
+      <sc-if value="{{ showDraw }}" hint-placeholder-val="{{ true }}">
+        <div style="text-align: center;">
+          <div style="font-size: 22px; font-weight: 800; color: #111; line-height: 1;">{{ r.draw }}</div>
+          <div style="font-size: 11px; color: #666;">[{{ r.stall }}]</div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ showSilks }}" hint-placeholder-val="{{ true }}">
+        <div style="display: flex; justify-content: center;">
+          <div style="width: 52px; height: 52px; border-radius: 6px; background: {{ r.silkBg }}; display: flex; align-items: center; justify-content: center; font-weight: 800; color: white; font-size: 14px; border: 2px solid #ddd;">{{ r.silkText }}</div>
+        </div>
+      </sc-if>
+
+      <div>
+        <div style="font-weight: 700; color: #1e3a6e; font-size: 13px; margin-bottom: 2px;">
+          <a href="#">{{ r.name }}</a>
+        </div>
+        <div style="font-size: 11px; color: #555; margin-bottom: 3px; display: flex; align-items: center; gap: 6px;">
+          <span>{{ r.details }}</span>
+          <sc-if value="{{ r.showCommentIcon }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ r.toggleExpand }}" title="{{ r.commentCount }} horse comment(s) — click to view" style="background: none; border: none; padding: 0; margin: 0; cursor: pointer; font-size: 14px; line-height: 1; color: #1e3a6e;">💬</button>
+          </sc-if>
+        </div>
+        <div style="font-size: 11px; color: #555; margin-bottom: 4px;">{{ r.weight }}</div>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <span style="background: #eef; color: #333; font-size: 11px; padding: 1px 5px; border-radius: 3px; font-family: monospace;">{{ r.form }}</span>
+          <span style="font-size: 11px; color: #555;">{{ r.rating }}</span>
+          <sc-if value="{{ r.pound }}" hint-placeholder-val="{{ false }}">
+            <span style="font-size: 13px; color: #555;">{{ r.pound }}</span>
+          </sc-if>
+        </div>
+        <sc-if value="{{ r.hasChips }}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-top: 6px;">
+            <sc-for list="{{ r.chips }}" as="ch" hint-placeholder-count="2">
+              <span style="background: {{ ch.bg }}; color: {{ ch.color }}; border: 1px solid {{ ch.border }}; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 3px; white-space: nowrap;">{{ ch.text }}</span>
+            </sc-for>
+            <sc-if value="{{ r.hasNotes }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ r.toggleNotes }}" title="Trainer's declaration note" style="background: none; border: none; padding: 1px 2px; margin-left: 2px; font-size: 10px; font-weight: 700; color: #1e3a6e; cursor: pointer; letter-spacing: 0.02em;">{{ r.noteToggleLabel }}</button>
+            </sc-if>
+          </div>
+        </sc-if>
+      </div>
+
+      <sc-if value="{{ showLastRun }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size: 12px; color: #555; line-height: 1.6;">
+          <div>{{ r.lastRan }}</div>
+          <div>{{ r.sampled }}</div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ showConnections }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size: 12px; line-height: 1.7;">
+          <div><a href="#">{{ r.jockey }}</a></div>
+          <div><a href="#">{{ r.trainer }}</a></div>
+          <div><a href="#">{{ r.owner }}</a></div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ showComments }}" hint-placeholder-val="{{ true }}">
+        <sc-if value="{{ commentsModeColumn }}" hint-placeholder-val="{{ true }}">
+          <div style="font-size: 11px; line-height: 1.5;">
+            <sc-for list="{{ r.comments }}" as="c" hint-placeholder-count="1">
+              <div class="cmt-row" style="margin-bottom: 6px; position: relative; padding: 2px 20px 2px 4px; border-radius: 4px;">
+                <button class="cmt-del" onClick="{{ c.del }}" title="Remove this comment from your card" style="position: absolute; top: 2px; right: 2px; background: none; border: none; cursor: pointer; padding: 2px; line-height: 1;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                </button>
+                <div style="color: #888; margin-bottom: 2px;">{{ c.head }}</div>
+                <sc-for list="{{ c.lines }}" as="ln" hint-placeholder-count="1">
+                  <div style="color: #222;"><strong>{{ ln.label }}</strong> — {{ ln.text }}</div>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ commentsModeIcon }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size: 11px; color: #ccc;">—</div>
+        </sc-if>
+      </sc-if>
+
+      <sc-if value="{{ showStatus }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <sc-if value="{{ r.badge }}" hint-placeholder-val="{{ false }}">
+            <span style="background: {{ r.badgeBg }}; color: {{ r.badgeColor }}; font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 20px; white-space: nowrap;">{{ r.badge }}</span>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ showResult }}" hint-placeholder-val="{{ true }}">
+        <div style="text-align: right; padding-right: 8px;">
+          <div style="font-size: 14px; font-weight: 800; color: #111;">{{ r.pos }}</div>
+          <sc-if value="{{ r.lengths }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size: 11px; color: #555;">[{{ r.lengths }}]</div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <div style="display: flex; justify-content: center; position: relative;">
+        <button onClick="{{ r.toggleMenu }}" style="background: #1e3a6e; color: white; border: none; width: 32px; height: 32px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; border-radius: 3px;">⋮</button>
+        <sc-if value="{{ r.menuOpen }}" hint-placeholder-val="{{ false }}">
+          <div onClick="{{ closeMenus }}" style="position: fixed; inset: 0; z-index: 80;"></div>
+          <div style="position: absolute; top: 36px; right: 0; z-index: 81; background: white; border: 1px solid #ddd; border-radius: 6px; box-shadow: 0 10px 28px rgba(0,0,0,0.18); padding: 6px; width: 210px; display: flex; flex-direction: column;">
+            <sc-for list="{{ r.actions }}" as="a" hint-placeholder-count="7">
+              <button onClick="{{ a.run }}" disabled="{{ a.disabled }}" style="background: none; border: none; text-align: left; padding: 9px 10px; font-size: 13px; font-weight: 600; color: {{ a.color }}; cursor: {{ a.cursor }}; border-radius: 4px;" style-hover="background: #f2f4f8;">{{ a.label }}</button>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+
+      <sc-if value="{{ r.nonRunner }}" hint-placeholder-val="{{ false }}">
+        <div style="position: absolute; inset: 0; background: repeating-linear-gradient(135deg, transparent, transparent 8px, rgba(180,180,180,0.18) 8px, rgba(180,180,180,0.18) 16px); pointer-events: none;"></div>
+      </sc-if>
+
+      <sc-if value="{{ r.highlighted }}" hint-placeholder-val="{{ false }}">
+        <div style="position: absolute; inset: 0; border-radius: 4px; animation: bha-pulse 1s ease-in-out 3; pointer-events: none;"></div>
+      </sc-if>
+
+    </div>
+
+    <sc-if value="{{ r.notesOpen }}" hint-placeholder-val="{{ false }}">
+      <div class="dec-note" style="min-width: 1100px; background: #f4f7fb; border-bottom: 1px solid #e8e8e8; border-top: 1px solid #dbe3ef; padding: 8px 16px 9px 132px; display: flex; flex-direction: column; gap: 6px;">
+        <sc-for list="{{ r.notes }}" as="nt" hint-placeholder-count="1">
+          <div style="display: flex; align-items: baseline; gap: 8px; max-width: 760px;">
+            <sc-if value="{{ nt.hasTag }}" hint-placeholder-val="{{ false }}">
+              <span style="background: {{ nt.tagBg }}; color: {{ nt.tagColor }}; border: 1px solid {{ nt.tagBorder }}; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 3px; white-space: nowrap; flex-shrink: 0;">{{ nt.tagText }}</span>
+            </sc-if>
+            <div style="font-size: 11.5px; color: #333; line-height: 1.5; text-wrap: pretty;">
+              <span style="color: #8a94a6; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; font-size: 9.5px; margin-right: 6px;">Dec note</span>{{ nt.text }}
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ r.expanded }}" hint-placeholder-val="{{ false }}">
+      <div style="padding: 14px 16px 16px 56px; background: #f7f9fc; border-bottom: 1px solid #e8e8e8; font-size: 11px; line-height: 1.5;">
+        <sc-for list="{{ r.comments }}" as="c" hint-placeholder-count="1">
+          <div class="cmt-row" style="margin-bottom: 6px; position: relative; padding: 2px 20px 2px 4px; border-radius: 4px; max-width: 480px;">
+            <button class="cmt-del" onClick="{{ c.del }}" title="Remove this comment from your card" style="position: absolute; top: 2px; right: 2px; background: none; border: none; cursor: pointer; padding: 2px; line-height: 1;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+            </button>
+            <div style="color: #888; margin-bottom: 2px;">{{ c.head }}</div>
+            <sc-for list="{{ c.lines }}" as="ln" hint-placeholder-count="1">
+              <div style="color: #222;"><strong>{{ ln.label }}</strong> — {{ ln.text }}</div>
+            </sc-for>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+  </sc-for>
+</div>
+</div>
+
+</div>
+
+<!-- COLLAPSED STRIP -->
+<button onClick="{{ togglePanel }}" style="position: fixed; top: 0; left: 0; width: 36px; height: 100vh; background: #1e3a6e; border: none; color: white; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 16px 0; z-index: 60;" title="Toggle notifications">
+  <span style="font-size: 13px;">{{ stripArrow }}</span>
+  <span style="writing-mode: vertical-rl; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase;">Notifications</span>
+  <sc-if value="{{ hasUnread }}" hint-placeholder-val="{{ true }}">
+    <span style="width: 8px; height: 8px; background: #dc2626; border-radius: 50%;"></span>
+  </sc-if>
+</button>
+
+<!-- RACECARD EDIT VIEW (fullscreen) -->
+<sc-if value="{{ editViewOpen }}" hint-placeholder-val="{{ false }}">
+  <div style="position: fixed; inset: 0; background: white; z-index: 200; display: flex; flex-direction: column;">
+    <div style="background: #1e3a6e; color: white; padding: 16px 24px; flex-shrink: 0; display: flex; align-items: flex-start; justify-content: space-between;">
+      <div>
+        <div style="font-size: 22px; font-weight: 800;">{{ activeRaceTitle }}</div>
+        <div style="font-size: 13px; color: #cdd8ec; margin-top: 4px;">LINGFIELD PARK · {{ allRunnersCount }} runners · Class 6</div>
+      </div>
+      <button onClick="{{ closeEditView }}" style="background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.3); color: white; border-radius: 5px; padding: 8px 14px; font-size: 13px; font-weight: 700; cursor: pointer;">✕ Close</button>
+    </div>
+
+    <div style="background: #0f2144; display: flex; flex-shrink: 0; overflow-x: auto;">
+      <sc-for list="{{ raceTabs }}" as="rt" hint-placeholder-count="7">
+        <button onClick="{{ rt.select }}" style="background: {{ rt.bg }}; color: {{ rt.color }}; border: none; border-bottom: 3px solid {{ rt.borderColor }}; padding: 10px 22px; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap;">{{ rt.label }}</button>
+      </sc-for>
+    </div>
+
+    <div style="background: #142a52; color: #cbd5e1; display: grid; grid-template-columns: 240px 130px 220px 170px 260px 90px 130px; padding: 10px 24px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0;">
+      <div>Jockey / Horse</div>
+      <div>Sampled</div>
+      <div>Horse comments</div>
+      <div>Status</div>
+      <div style="text-align: right;">Result</div>
+      <div></div>
+    </div>
+
+    <div style="flex: 1; overflow: auto; position: relative;">
+      <div>
+        <sc-for list="{{ allRunners }}" as="r" hint-placeholder-count="11">
+          <div style="display: grid; grid-template-columns: 240px 130px 220px 170px 260px 90px 130px; align-items: center; padding: 14px 24px; border-bottom: 1px solid #e8e8e8;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div style="width: 36px; height: 36px; border-radius: 5px; background: {{ r.silkBg }}; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: white; font-size: 11px; font-weight: 800;">{{ r.silkText }}</div>
+              <div>
+                <div style="font-weight: 700; color: #1e3a6e; font-size: 13px;">{{ r.jockey }}</div>
+                <div style="font-size: 12px; color: #555;">{{ r.name }}</div>
+              </div>
+            </div>
+            <div style="font-size: 12px; color: #555;">{{ r.sampled }}</div>
+            <div style="font-size: 11px; line-height: 1.5;">
+              <sc-for list="{{ r.comments }}" as="c" hint-placeholder-count="1">
+                <div style="margin-bottom: 8px;">
+                  <div style="color: #888; margin-bottom: 2px;">{{ c.head }}</div>
+                  <sc-for list="{{ c.lines }}" as="ln" hint-placeholder-count="1">
+                    <div style="color: #222;"><strong>{{ ln.label }}</strong> — {{ ln.text }}</div>
+                  </sc-for>
+                </div>
+              </sc-for>
+            </div>
+            <div>
+              <sc-if value="{{ r.badge }}" hint-placeholder-val="{{ false }}">
+                <span style="background: {{ r.badgeBg }}; color: {{ r.badgeColor }}; font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 20px; white-space: nowrap;">{{ r.badge }}</span>
+              </sc-if>
+            </div>
+            <div style="text-align: right; font-weight: 800; color: #111; font-size: 14px;">{{ r.pos }}</div>
+            <div></div>
+          </div>
+        </sc-for>
+      </div>
+      <canvas ref="{{ setCanvasRef }}" onPointerDown="{{ startDraw }}" onPointerMove="{{ draw }}" onPointerUp="{{ endDraw }}" onPointerLeave="{{ endDraw }}" style="position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: {{ canvasPointerEvents }}; cursor: crosshair;"></canvas>
+    </div>
+
+    <div style="position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); background: white; border: 1px solid #ddd; border-radius: 999px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); padding: 8px 14px; display: flex; align-items: center; gap: 10px; z-index: 210;">
+      <button onClick="{{ toggleAnnotating }}" style="background: {{ annotatingBg }}; color: {{ annotatingColor }}; border: none; border-radius: 999px; padding: 8px 14px; font-size: 12px; font-weight: 700; cursor: pointer;">{{ annotatingLabel }}</button>
+      <div style="width: 1px; height: 24px; background: #e0e0e0;"></div>
+      <button onClick="{{ setToolPen }}" style="background: {{ penToolBg }}; border: 1px solid #ddd; border-radius: 8px; width: 36px; height: 36px; cursor: pointer; font-size: 15px;" title="Pen">✎</button>
+      <button onClick="{{ setToolEraser }}" style="background: {{ eraserToolBg }}; border: 1px solid #ddd; border-radius: 8px; width: 36px; height: 36px; cursor: pointer; font-size: 15px;" title="Eraser">⌫</button>
+      <div style="width: 1px; height: 24px; background: #e0e0e0;"></div>
+      <sc-for list="{{ colorSwatches }}" as="c" hint-placeholder-count="6">
+        <button onClick="{{ c.select }}" style="width: 22px; height: 22px; border-radius: 50%; background: {{ c.value }}; border: {{ c.border }}; cursor: pointer; flex-shrink: 0;"></button>
+      </sc-for>
+      <div style="width: 1px; height: 24px; background: #e0e0e0;"></div>
+      <button onClick="{{ clearCanvas }}" style="background: none; border: none; color: #888; font-size: 12px; font-weight: 600; cursor: pointer;">Clear</button>
+      <button onClick="{{ saveCanvas }}" style="background: #1e3a6e; color: white; border: none; border-radius: 999px; padding: 8px 16px; font-size: 12px; font-weight: 700; cursor: pointer;">{{ saveLabel }}</button>
+    </div>
+  </div>
+</sc-if>
+
+<!-- FIRST-TIME INTRO -->
+<sc-if value="{{ introOpen }}" hint-placeholder-val="{{ false }}">
+  <div style="position: fixed; inset: 0; background: rgba(15,33,68,0.55); z-index: 400; display: flex; align-items: center; justify-content: center; padding: 24px;">
+    <div style="background: white; width: 580px; max-width: 94vw; box-shadow: 0 12px 40px rgba(0,0,0,0.3);">
+      <div style="background: #1e3a6e; color: white; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between;">
+        <span style="font-size: 14px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase;">Privileges &amp; declared items — set up your race card</span>
+        <span style="font-size: 12px; color: #a9b8d8; font-weight: 700;">Step 1 of 2</span>
+      </div>
+      <div style="padding: 30px 32px 28px;">
+        <div style="font-size: 19px; font-weight: 800; color: #111; margin-bottom: 10px; line-height: 1.3;">Choose the privileges and declared items you want to see.</div>
+        <div style="font-size: 13.5px; color: #444; line-height: 1.6; margin-bottom: 24px;">Every steward works differently. Pick which items show on your race card, set your own abbreviations, and flag the ones that should stand out. Your choices save automatically and follow you every race day.</div>
+        <div style="display: flex; gap: 12px; align-items: center;">
+          <button onClick="{{ introSetup }}" style="background: #1e3a6e; color: white; border: none; padding: 11px 20px; font-size: 13px; font-weight: 700; cursor: pointer;">Set up my card</button>
+          <button onClick="{{ introSkip }}" style="background: none; border: 1px solid #ccc; color: #555; padding: 11px 20px; font-size: 13px; font-weight: 600; cursor: pointer;">Use standard defaults</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<!-- FIRST-TIME EXPERIENCE: HORSE COMMENTS WIZARD -->
+<sc-if value="{{ ctOpen }}" hint-placeholder-val="{{ false }}">
+  <div style="position: fixed; inset: 0; background: rgba(15,33,68,0.55); z-index: 400; display: flex; align-items: center; justify-content: center; padding: 24px;">
+    <div style="background: white; width: 980px; max-width: 96vw; max-height: 92vh; overflow: auto; box-shadow: 0 12px 40px rgba(0,0,0,0.3); display: flex; flex-direction: column;">
+      <div style="background: #1e3a6e; color: white; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;">
+        <div style="font-size: 14px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase;">Horse comments — set up your layout</div>
+        <div style="font-size: 12px; color: #a9b8d8; font-weight: 700;">{{ ctStepLabel }}</div>
+      </div>
+
+      <sc-if value="{{ ctStep1 }}" hint-placeholder-val="{{ true }}">
+        <div style="padding: 36px 40px;">
+          <div style="font-size: 20px; font-weight: 800; color: #111; margin-bottom: 12px;">Set up how you want to see horse comments.</div>
+          <div style="font-size: 14px; color: #444; line-height: 1.6; max-width: 560px; margin-bottom: 28px;">Choose which types you want to see, and how far back each one goes.</div>
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <button onClick="{{ ctNext }}" style="background: #1e3a6e; color: white; border: none; padding: 11px 20px; font-size: 13px; font-weight: 700; cursor: pointer;">Set up my layout</button>
+            <button onClick="{{ ctSkip }}" style="background: none; border: 1px solid #ccc; color: #555; padding: 11px 20px; font-size: 13px; font-weight: 600; cursor: pointer;">Skip for now, use defaults</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ ctStep2 }}" hint-placeholder-val="{{ false }}">
+        <div style="padding: 20px 24px 4px;">
+          <div style="font-size: 13px; color: #555; margin-bottom: 8px; line-height: 1.4;">Turn each comment category on or off, and choose how far back it shows. Recency is counted in runs, not time.</div>
+          <div style="display: flex; flex-direction: column;">
+            <sc-for list="{{ ctTypes }}" as="t" hint-placeholder-count="5">
+              <div style="display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 20px; align-items: center; padding: 10px 0; border-top: 1px solid #ededed;">
+                <div style="min-width: 0;">
+                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="checkbox" checked="{{ t.on }}" onChange="{{ t.toggle }}"/>
+                    <span style="font-size: 13.5px; font-weight: 700; color: #111;">{{ t.label }}</span>
+                  </label>
+                  <div style="font-size: 11.5px; color: #888; margin: 2px 0 0 24px; line-height: 1.35;">{{ t.note }}</div>
+                  <sc-if value="{{ t.isBehavioural }}" hint-placeholder-val="{{ false }}">
+                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 11.5px; color: #333; margin: 6px 0 0 24px;">
+                      <input type="checkbox" checked="{{ t.autoFade }}" onChange="{{ t.toggleAutoFade }}"/>
+                      <span>Auto-fade after ~10 clean runs — dimmed, not hidden</span>
+                    </label>
+                  </sc-if>
+                </div>
+                <sc-if value="{{ t.showRanges }}" hint-placeholder-val="{{ true }}">
+                  <div style="display: flex; gap: 14px; flex-wrap: nowrap;">
+                    <sc-for list="{{ t.ranges }}" as="rg" hint-placeholder-count="4">
+                      <label style="display: flex; align-items: center; gap: 4px; cursor: pointer; font-size: 11.5px; color: #333; white-space: nowrap;">
+                        <input type="radio" name="{{ rg.name }}" checked="{{ rg.checked }}" onChange="{{ rg.select }}"/>
+                        <span>{{ rg.label }}</span>
+                      </label>
+                    </sc-for>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="background: white; border-top: 1px solid #e0e0e0; padding: 14px 24px; display: flex; gap: 12px; flex-shrink: 0;">
+          <button onClick="{{ ctBack }}" style="background: none; border: 1px solid #ccc; color: #555; padding: 9px 18px; font-size: 13px; font-weight: 600; cursor: pointer;">Back</button>
+          <button onClick="{{ ctNext }}" style="background: #1e3a6e; color: white; border: none; padding: 9px 18px; font-size: 13px; font-weight: 700; cursor: pointer;">Continue</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ ctStep3 }}" hint-placeholder-val="{{ false }}">
+        <div style="display: grid; grid-template-columns: 1fr 330px;">
+          <div style="padding: 28px 32px;">
+            <div style="font-size: 15px; font-weight: 800; color: #111; margin-bottom: 6px;">How do you want comments to show?</div>
+            <div style="font-size: 13px; color: #555; margin-bottom: 20px;">This is just for you — it only changes your own view, not what anyone else sees.</div>
+            <sc-for list="{{ displayOptions }}" as="o" hint-placeholder-count="3">
+              <label style="display: flex; align-items: flex-start; gap: 10px; padding: 12px 0; border-bottom: 1px solid #e8e8e8; cursor: pointer;">
+                <input type="radio" name="ct-display-mode" checked="{{ o.checked }}" onChange="{{ o.select }}" style="margin-top: 3px;"/>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="font-size: 14px; font-weight: 700; color: #111;">{{ o.label }}</div>
+                  <div style="font-size: 12px; color: #888; margin-top: 2px;">{{ o.note }}</div>
+                  <sc-if value="{{ o.showIconSub }}" hint-placeholder-val="{{ false }}">
+                    <select value="{{ iconCommentsDefault }}" onChange="{{ setIconCommentsDefault }}" onClick="{{ stopProp }}" style="margin-top: 8px; font-size: 12px; font-weight: 600; padding: 6px 8px; border: 1px solid #ccc; border-radius: 4px; background: white; font-family: inherit; color: #111; cursor: pointer;">
+                      <option value="collapsed">Collapsed by default — click icon to reveal</option>
+                      <option value="expanded">Shown permanently — always visible</option>
+                    </select>
+                  </sc-if>
+                </div>
+              </label>
+            </sc-for>
+          </div>
+          <div style="padding: 20px; background: #f7f7f7;">
+            <div style="font-size: 11px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">Live preview — your race table</div>
+            <sc-if value="{{ commentsModeColumn }}" hint-placeholder-val="{{ true }}">
+              <div style="background: white; border: 1px solid #e0e0e0; font-size: 11px;">
+                <div style="display: grid; grid-template-columns: 1fr 1.4fr; background: #f7f7f7; border-bottom: 1px solid #ddd; padding: 5px 10px; font-weight: 700; color: #888; text-transform: uppercase; font-size: 9px; letter-spacing: 0.5px;">
+                  <div>Horse</div>
+                  <div style="background: #eef; color: #1e3a6e; margin: -5px -10px; padding: 5px 10px;">Horse comments</div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1.4fr; padding: 8px 10px; align-items: start;">
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <div style="width: 22px; height: 22px; border-radius: 4px; background: #1a3a7a; flex-shrink: 0;"></div>
+                    <div style="font-weight: 700; color: #1e3a6e;">CEZARRO</div>
+                  </div>
+                  <div style="line-height: 1.5;">
+                    <div style="color: #888;">05/06/26 · MUS</div>
+                    <div style="color: #222;"><strong>Interference</strong> — Suffered interf</div>
+                  </div>
+                </div>
+              </div>
+              <div style="font-size: 11px; color: #888; margin-top: 8px;">Comments get their own column, always visible for every horse.</div>
+            </sc-if>
+            <sc-if value="{{ commentsModeIcon }}" hint-placeholder-val="{{ false }}">
+              <div style="background: white; border: 1px solid #e0e0e0; font-size: 11px;">
+                <div style="background: #f7f7f7; border-bottom: 1px solid #ddd; padding: 5px 10px; font-weight: 700; color: #888; text-transform: uppercase; font-size: 9px; letter-spacing: 0.5px;">Horse</div>
+                <div style="padding: 8px 10px;">
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <div style="width: 22px; height: 22px; border-radius: 4px; background: #1a3a7a; flex-shrink: 0;"></div>
+                    <div style="font-weight: 700; color: #1e3a6e;">CEZARRO</div>
+                    <span style="font-size: 14px; color: #1e3a6e;">💬</span>
+                    <span style="color: #888; font-size: 10px;">← click</span>
+                  </div>
+                  <div style="margin: 6px 0 0 28px; background: #f7f7f7; border: 1px solid #e0e0e0; padding: 6px 8px; line-height: 1.5;">
+                    <div style="color: #888;">05/06/26 · MUS</div>
+                    <div style="color: #222;"><strong>Interference</strong> — Suffered interf</div>
+                  </div>
+                </div>
+              </div>
+              <div style="font-size: 11px; color: #888; margin-top: 8px;">No column — a speech-bubble icon appears next to the horse only when it has a comment; click it to reveal.</div>
+            </sc-if>
+          </div>
+        </div>
+        <div style="background: white; border-top: 1px solid #e0e0e0; padding: 14px 24px; display: flex; gap: 12px; flex-shrink: 0;">
+          <button onClick="{{ ctBack }}" style="background: none; border: 1px solid #ccc; color: #555; padding: 9px 18px; font-size: 13px; font-weight: 600; cursor: pointer;">Back</button>
+          <button onClick="{{ ctNext }}" style="background: #1e3a6e; color: white; border: none; padding: 9px 18px; font-size: 13px; font-weight: 700; cursor: pointer;">Continue</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ ctStep4 }}" hint-placeholder-val="{{ false }}">
+        <div style="display: grid; grid-template-columns: 1fr 330px;">
+          <div style="padding: 28px 32px;">
+            <div style="font-size: 16px; font-weight: 800; color: #111; margin-bottom: 14px;">Your comment layout</div>
+            <sc-for list="{{ ctReviewRows }}" as="s" hint-placeholder-count="7">
+              <div style="display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px solid #e8e8e8; font-size: 13px;">
+                <span style="font-weight: 700; color: #111;">{{ s.label }}</span>
+                <span style="color: #555;">{{ s.value }}</span>
+              </div>
+            </sc-for>
+            <div style="font-size: 12px; color: #888; margin-top: 12px;">You can change this any time.</div>
+            <div style="display: flex; gap: 12px; margin-top: 20px;">
+              <button onClick="{{ ctBack }}" style="background: none; border: 1px solid #ccc; color: #555; padding: 9px 18px; font-size: 13px; font-weight: 600; cursor: pointer;">Back</button>
+              <button onClick="{{ ctFinish }}" style="background: #1e3a6e; color: white; border: none; padding: 9px 20px; font-size: 13px; font-weight: 700; cursor: pointer;">Save my layout</button>
+            </div>
+          </div>
+          <div style="padding: 20px; background: #f7f7f7;">
+            <div style="font-size: 11px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">Live preview — example horse</div>
+            <div style="background: white; border: 1px solid #e0e0e0; padding: 12px 14px; font-size: 11px; line-height: 1.5; min-height: 200px;">
+              <sc-for list="{{ ctPreviewComments }}" as="c" hint-placeholder-count="4">
+                <div style="margin-bottom: 10px; opacity: {{ c.opacity }};">
+                  <div style="color: #888; margin-bottom: 2px;">{{ c.head }}</div>
+                  <div style="color: #222;"><strong>{{ c.label }}</strong> — {{ c.text }}</div>
+                  <sc-if value="{{ c.fadeNote }}" hint-placeholder-val="{{ false }}">
+                    <div style="color: #999; font-style: italic;">{{ c.fadeNote }}</div>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+</sc-if>
+
+<!-- RULES SMART SEARCH DRAWER -->
+<sc-if value="{{ rulesOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeRulesDrawer }}" style="position: fixed; inset: 0; background: rgba(15,33,68,0.35); z-index: 420;"></div>
+  <div style="position: fixed; top: 0; right: 0; width: 400px; max-width: 92vw; height: 100vh; background: white; box-shadow: -8px 0 28px rgba(0,0,0,0.25); z-index: 421; display: flex; flex-direction: column;">
+    <div style="background: white; border-bottom: 1px solid #e0e0e0; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;">
+      <div style="font-size: 15px; font-weight: 800; color: #111;">Rules · smart search</div>
+      <button onClick="{{ closeRulesDrawer }}" style="background: none; border: none; font-size: 18px; color: #888; cursor: pointer; line-height: 1;">×</button>
+    </div>
+    <div style="padding: 16px 20px 0; flex-shrink: 0;">
+      <input type="text" value="{{ rulesQuery }}" onChange="{{ setRulesQuery }}" placeholder="Search rules by keyword or code" autoComplete="off" style="width: 100%; padding: 10px 12px; font-size: 14px; border: 1px solid #3b5bdb; border-radius: 5px; color: #222; font-family: inherit; box-sizing: border-box;"/>
+    </div>
+    <div style="flex: 1; overflow-y: auto; padding: 16px 20px 20px;">
+      <div style="font-size: 10px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">{{ rulesResultsLabel }}</div>
+      <sc-for list="{{ rulesResults }}" as="r" hint-placeholder-count="2">
+        <div style="border-bottom: 1px solid #ececec; padding-bottom: 14px; margin-bottom: 14px;">
+          <div style="font-size: 11.5px; font-weight: 800; color: #1e3a6e; margin-bottom: 3px;">Rule {{ r.code }}</div>
+          <div style="font-size: 13.5px; font-weight: 700; color: #111; margin-bottom: 6px;">{{ r.title }}</div>
+          <div style="font-size: 12.5px; color: #555; line-height: 1.5; margin-bottom: 6px;">&ldquo;{{ r.excerpt }}&rdquo;</div>
+          <a href="#" onClick="{{ r.viewFull }}" style="font-size: 12px; color: #1e3a6e; font-weight: 700; text-decoration: none;">View full rule →</a>
+        </div>
+      </sc-for>
+      <sc-if value="{{ rulesRelated.length }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size: 10px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin: 18px 0 10px;">Related</div>
+        <sc-for list="{{ rulesRelated }}" as="r" hint-placeholder-count="1">
+          <div style="border-bottom: 1px solid #ececec; padding-bottom: 14px; margin-bottom: 14px;">
+            <div style="font-size: 11.5px; font-weight: 800; color: #1e3a6e; margin-bottom: 3px;">{{ r.code }}</div>
+            <div style="font-size: 13.5px; font-weight: 700; color: #111; margin-bottom: 6px;">{{ r.title }}</div>
+            <div style="font-size: 12.5px; color: #555; line-height: 1.5; margin-bottom: 6px;">&ldquo;{{ r.excerpt }}&rdquo;</div>
+            <a href="#" onClick="{{ r.viewFull }}" style="font-size: 12px; color: #1e3a6e; font-weight: 700; text-decoration: none;">View full rule →</a>
+          </div>
+        </sc-for>
+      </sc-if>
+      <sc-if value="{{ rulesNoMatches }}" hint-placeholder-val="{{ false }}">
+        <div style="padding: 20px 0; text-align: center; color: #888; font-size: 13px;">No rules match "{{ rulesQuery }}".</div>
+      </sc-if>
+    </div>
+  </div>
+</sc-if>
+
+<!-- CREATE ENQUIRY MODAL -->
+<sc-if value="{{ enquiryOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeEnquiry }}" style="position: fixed; inset: 0; background: rgba(15,33,68,0.45); z-index: 410;"></div>
+  <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 640px; max-width: 94vw; background: white; box-shadow: 0 20px 60px rgba(0,0,0,0.35); z-index: 411; border-radius: 4px;">
+    <div style="padding: 30px 40px 10px; text-align: center;">
+      <div style="font-size: 21px; font-weight: 800; color: #333; letter-spacing: 0.02em;">CREATE ENQUIRY FOR '{{ enquirySubjectName }}'</div>
+      <div style="font-size: 12px; font-weight: 700; color: #8a94a6; letter-spacing: 0.12em; margin-top: 8px;">{{ enquiryCategoryLabel }}</div>
+    </div>
+    <div style="height: 1px; background: #ececec; margin: 18px 0 0;"></div>
+    <div style="padding: 24px 40px 4px; display: flex; flex-direction: column; gap: 20px;">
+      <div>
+        <div style="font-size: 13px; color: #667; margin-bottom: 6px;">Select a Subject</div>
+        <select value="{{ enquirySubject }}" onChange="{{ setEnquirySubject }}" style="width: 100%; padding: 10px 12px; font-size: 15px; border: 1px solid #3b5bdb; border-radius: 3px; color: #222; font-family: inherit; box-sizing: border-box;">
+          <sc-for list="{{ enquirySubjectOptions }}" as="o" hint-placeholder-count="3">
+            <option value="{{ o.value }}">{{ o.label }}</option>
+          </sc-for>
+        </select>
+      </div>
+      <div>
+        <div style="font-size: 13px; color: #667; margin-bottom: 6px;">Select the Offence's Category</div>
+        <select value="{{ enquiryCategory }}" onChange="{{ setEnquiryCategory }}" style="width: 100%; padding: 10px 12px; font-size: 15px; border: 1px solid #ccc; border-radius: 3px; color: #222; font-family: inherit; box-sizing: border-box;">
+          <sc-for list="{{ enquiryCategoryOptions }}" as="c" hint-placeholder-count="4">
+            <option value="{{ c.value }}">{{ c.label }}</option>
+          </sc-for>
+        </select>
+      </div>
+      <div style="position: relative;">
+        <div style="font-size: 13px; color: #667; margin-bottom: 6px;">Select an Offence</div>
+
+        <sc-if value="{{ enquiryOffenceHasSelected }}" hint-placeholder-val="{{ false }}">
+          <div style="border: 1px solid #cfd6e4; border-radius: 4px; padding: 12px 14px; display: flex; align-items: flex-start; gap: 12px; background: #f4f6fb;">
+            <div style="flex-shrink: 0; display: flex; flex-direction: column; gap: 4px; align-items: flex-start; min-width: 58px;">
+              <span style="background: #1e3a6e; color: white; font-size: 12px; font-weight: 800; padding: 4px 8px; border-radius: 3px; letter-spacing: 0.02em; white-space: nowrap;">{{ enquiryOffenceSelected.code }}</span>
+              <sc-if value="{{ enquiryOffenceSelected.feeCode }}" hint-placeholder-val="{{ false }}">
+                <span style="font-size: 10px; font-weight: 700; color: #8a94a6;">{{ enquiryOffenceSelected.feeCode }}</span>
+              </sc-if>
+            </div>
+            <div style="flex: 1; font-size: 13.5px; color: #222; line-height: 1.45;">{{ enquiryOffenceSelected.text }}</div>
+            <button onClick="{{ clearEnquiryOffence }}" style="flex-shrink: 0; background: none; border: 1px solid #ccc; color: #555; font-size: 11.5px; font-weight: 700; padding: 7px 12px; border-radius: 3px; cursor: pointer;">Change</button>
+          </div>
+          <a href="#" onClick="{{ viewSelectedOffenceRule }}" style="display: inline-block; margin-top: 8px; font-size: 12px; color: #1e3a6e; font-weight: 700; text-decoration: none;">View full rule →</a>
+        </sc-if>
+
+        <sc-if value="{{ enquiryOffenceNotSelected }}" hint-placeholder-val="{{ true }}">
+          <input type="text" value="{{ enquiryOffenceQuery }}" onChange="{{ setEnquiryOffenceQuery }}" onFocus="{{ openEnquiryOffence }}" onKeyDown="{{ enquiryOffenceKeyDown }}" placeholder="Search by keyword or code — e.g. G13.2, placing, Fee Code 1" autoComplete="off" style="width: 100%; padding: 10px 12px; font-size: 14.5px; border: 1px solid #3b5bdb; border-radius: 3px; color: #222; font-family: inherit; box-sizing: border-box;"/>
+
+          <sc-if value="{{ enquiryOffenceOpen }}" hint-placeholder-val="{{ false }}">
+            <div onClick="{{ closeEnquiryOffence }}" style="position: fixed; inset: 0; z-index: 415;"></div>
+            <div style="position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; z-index: 416; background: white; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); max-height: 320px; overflow-y: auto;">
+              <sc-for list="{{ enquiryOffenceGroups }}" as="g" hint-placeholder-count="2">
+                <div style="position: sticky; top: 0; background: #eef1f8; color: #1e3a6e; font-size: 10px; font-weight: 800; letter-spacing: 0.08em; padding: 6px 12px; text-transform: uppercase; border-bottom: 1px solid #dde3ee;">{{ g.familyLabel }}</div>
+                <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="3">
+                  <div onClick="{{ it.select }}" style="display: flex; gap: 12px; align-items: flex-start; padding: 10px 12px; border-bottom: 1px solid #f0f0f0; cursor: pointer; background: {{ it.rowBg }};" style-hover="background: #f4f6fb;">
+                    <div style="flex-shrink: 0; display: flex; flex-direction: column; gap: 3px; align-items: flex-start; min-width: 58px;">
+                      <span style="background: #eef1f8; color: #1e3a6e; font-size: 11.5px; font-weight: 800; padding: 3px 7px; border-radius: 3px; white-space: nowrap;">{{ it.codeSplit.before }}<mark style="background: #ffe38a; color: #222; padding: 0;">{{ it.codeSplit.match }}</mark>{{ it.codeSplit.after }}</span>
+                      <sc-if value="{{ it.hasFee }}" hint-placeholder-val="{{ false }}">
+                        <span style="font-size: 9.5px; font-weight: 700; color: #8a94a6;">{{ it.feeSplit.before }}<mark style="background: #ffe38a; color: #222; padding: 0;">{{ it.feeSplit.match }}</mark>{{ it.feeSplit.after }}</span>
+                      </sc-if>
+                    </div>
+                    <div style="flex: 1; font-size: 13px; color: #222; line-height: 1.42;">{{ it.textSplit.before }}<mark style="background: #ffe38a; color: #222; padding: 0;">{{ it.textSplit.match }}</mark>{{ it.textSplit.after }}</div>
+                    <a href="#" onClick="{{ it.viewRule }}" style="flex-shrink: 0; align-self: center; font-size: 11px; color: #1e3a6e; font-weight: 700; text-decoration: none; white-space: nowrap;">View rule →</a>
+                  </div>
+                </sc-for>
+              </sc-for>
+              <sc-if value="{{ enquiryOffenceNoMatches }}" hint-placeholder-val="{{ false }}">
+                <div style="padding: 26px 18px; text-align: center;">
+                  <div style="font-size: 13px; font-weight: 700; color: #333; margin-bottom: 4px;">No offences match "{{ enquiryOffenceQuery }}"</div>
+                  <div style="font-size: 12px; color: #888;">Try the rule code (e.g. G13.2) or a keyword like "placing" or "weigh".</div>
+                </div>
+              </sc-if>
+            </div>
+          </sc-if>
+        </sc-if>
+      </div>
+    </div>
+    <div style="padding: 26px 40px 32px; display: flex; justify-content: space-between; gap: 12px;">
+      <button onClick="{{ closeEnquiry }}" style="background: white; border: 1px solid #ccc; color: #333; padding: 12px 26px; font-size: 14px; font-weight: 700; cursor: pointer; border-radius: 3px;">Close</button>
+      <button onClick="{{ saveEnquiry }}" style="background: {{ enquirySaveBg }}; border: none; color: white; padding: 12px 34px; font-size: 14px; font-weight: 700; cursor: pointer; border-radius: 3px;">Save</button>
+    </div>
+  </div>
+</sc-if>
+
+<!-- CUSTOMISE CARD DRAWER -->
+<sc-if value="{{ privOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closePriv }}" style="position: fixed; inset: 0; background: rgba(15,33,68,0.35); z-index: 400;"></div>
+  <div style="position: fixed; {{ privPosStyle }}; background: white; box-shadow: {{ privShadow }}; border-radius: {{ privRadius }}; z-index: 401; display: flex; flex-direction: column;">
+    <sc-if value="{{ firstRun }}" hint-placeholder-val="{{ false }}">
+      <div style="background: #1e3a6e; color: white; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;">
+        <div style="font-size: 14px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase;">Privileges &amp; declared items</div>
+        <span style="font-size: 11px; color: #a9b8d8; font-weight: 700;">✓ Saves automatically</span>
+      </div>
+    </sc-if>
+    <sc-if value="{{ firstRunNo }}" hint-placeholder-val="{{ true }}">
+      <div style="background: #1e3a6e; color: white; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;">
+        <div style="font-size: 13px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase;">Customise card</div>
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <span style="font-size: 11px; color: #a9b8d8; font-weight: 700;">✓ Saves automatically</span>
+          <button onClick="{{ closePriv }}" style="background: none; border: none; color: white; font-size: 18px; cursor: pointer; line-height: 1;">×</button>
+        </div>
+      </div>
+
+      <div style="padding: 14px 20px; border-bottom: 1px solid #e0e0e0; flex-shrink: 0;">
+        <div style="font-size: 10px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Settings for</div>
+        <select value="{{ customiseSection }}" onChange="{{ setSection }}" style="width: 100%; font-size: 13px; font-weight: 700; padding: 10px; border: 1.5px solid {{ sectionSelectBorder }}; border-radius: 5px; box-shadow: {{ sectionSelectGlow }}; background: white; font-family: inherit; color: #111; cursor: pointer;">
+          <option value="" selected="{{ sectionNone }}">Choose what to customise…</option>
+          <option value="privileges" selected="{{ sectionPrivileges }}">Privileges &amp; declared items</option>
+          <option value="comments" selected="{{ sectionComments }}">Horse comments</option>
+        </select>
+      </div>
+    </sc-if>
+
+    <div style="flex: 1; overflow-y: auto; padding: 20px 24px 20px;">
+      <sc-if value="{{ sectionNone }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 60px 20px; color: #888;">
+          <div style="font-size: 28px; margin-bottom: 10px;">↑</div>
+          <div style="font-size: 14px; font-weight: 700; color: #444; margin-bottom: 4px;">Choose what you'd like to customise</div>
+          <div style="font-size: 12.5px; color: #888; max-width: 320px;">Select “Privileges &amp; declared items” or “Horse comments” from the dropdown above to see its settings.</div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ sectionComments }}" hint-placeholder-val="{{ false }}">
+        <div style="display: grid; grid-template-columns: 1fr; gap: 22px;">
+          <div>
+            <div style="font-size: 11px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">What shows</div>
+            <sc-for list="{{ fteTypes }}" as="t" hint-placeholder-count="5">
+              <div style="padding: 9px 0; border-top: 1px solid #ededed;">
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                  <input type="checkbox" checked="{{ t.on }}" onChange="{{ t.toggle }}"/>
+                  <span style="font-size: 13px; font-weight: 700; color: #111;">{{ t.label }}</span>
+                </label>
+                <sc-if value="{{ t.showRanges }}" hint-placeholder-val="{{ true }}">
+                  <div style="display: flex; gap: 12px; margin: 6px 0 0 24px; flex-wrap: wrap;">
+                    <sc-for list="{{ t.ranges }}" as="rg" hint-placeholder-count="4">
+                      <label style="display: flex; align-items: center; gap: 4px; cursor: pointer; font-size: 11.5px; color: #333; white-space: nowrap;">
+                        <input type="radio" name="sp-{{ rg.name }}" checked="{{ rg.checked }}" onChange="{{ rg.select }}"/>
+                        <span>{{ rg.label }}</span>
+                      </label>
+                    </sc-for>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ t.isBehavioural }}" hint-placeholder-val="{{ false }}">
+                  <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 11.5px; color: #333; margin: 6px 0 0 24px;">
+                    <input type="checkbox" checked="{{ t.autoFade }}" onChange="{{ t.toggleAutoFade }}"/>
+                    <span>Auto-fade after ~10 clean runs</span>
+                  </label>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+          <div>
+            <div style="font-size: 11px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">How it shows</div>
+            <sc-for list="{{ displayOptions }}" as="o" hint-placeholder-count="3">
+              <label style="display: flex; align-items: flex-start; gap: 9px; padding: 9px 0; border-top: 1px solid #ededed; cursor: pointer;">
+                <input type="radio" name="sp-display-mode" checked="{{ o.checked }}" onChange="{{ o.select }}" style="margin-top: 3px;"/>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="font-size: 13px; font-weight: 700; color: #111;">{{ o.label }}</div>
+                  <div style="font-size: 11.5px; color: #888; margin-top: 2px;">{{ o.note }}</div>
+                  <sc-if value="{{ o.showIconSub }}" hint-placeholder-val="{{ false }}">
+                    <select value="{{ iconCommentsDefault }}" onChange="{{ setIconCommentsDefault }}" onClick="{{ stopProp }}" style="margin-top: 8px; font-size: 11.5px; font-weight: 600; padding: 6px 8px; border: 1px solid #ccc; border-radius: 4px; background: white; font-family: inherit; color: #111; cursor: pointer;">
+                      <option value="collapsed">Collapsed by default — click icon to reveal</option>
+                      <option value="expanded">Shown permanently — always visible</option>
+                    </select>
+                  </sc-if>
+                </div>
+              </label>
+            </sc-for>
+          </div>
+        </div>
+        <sc-if value="{{ removedCommentsAny }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top: 20px; border-top: 1px solid #ededed; padding-top: 14px;">
+            <div style="font-size: 11px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">Removed comments ({{ removedCommentsCount }})</div>
+            <div style="font-size: 11.5px; color: #888; margin-bottom: 8px;">Comments you've removed from your card. Restore any of them here, any time.</div>
+            <sc-for list="{{ removedComments }}" as="rc" hint-placeholder-count="1">
+              <div style="display: flex; align-items: center; gap: 10px; padding: 8px 0; border-top: 1px solid #ededed;">
+                <div style="flex: 1; min-width: 0;">
+                  <div style="font-size: 12.5px; font-weight: 700; color: #111;">{{ rc.horseName }}</div>
+                  <div style="font-size: 11.5px; color: #666; text-wrap: pretty;">{{ rc.text }}</div>
+                </div>
+                <button onClick="{{ rc.restore }}" style="background: none; border: 1px solid #ccc; color: #1e3a6e; padding: 6px 12px; font-size: 12px; font-weight: 700; cursor: pointer; border-radius: 4px; white-space: nowrap;">Restore</button>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+      </sc-if>
+
+      <sc-if value="{{ sectionPrivileges }}" hint-placeholder-val="{{ true }}">
+        <div style="display: grid; grid-template-columns: {{ privGridCols }}; gap: 24px;">
+          <div>
+            <div style="font-size: 13px; font-weight: 800; color: #111;">Declared items</div>
+            <div style="font-size: 11.5px; color: #888; margin: 2px 0 10px;">Headgear declared at entry, 48 hours before the race.</div>
+            <div style="display: grid; grid-template-columns: 46px minmax(0,1fr) 60px 108px 96px; gap: 8px; font-size: 9px; font-weight: 800; color: #999; text-transform: uppercase; letter-spacing: 0.5px; padding-bottom: 4px;">
+              <div>Show</div><div>Item</div><div>Abbrev</div><div>Display</div><div>Colour</div>
+            </div>
+            <sc-for list="{{ declaredRows }}" as="it" hint-placeholder-count="7">
+              <div style="display: grid; grid-template-columns: 46px minmax(0,1fr) 60px 108px 96px; gap: 8px; align-items: center; padding: 7px 0; border-top: 1px solid #ededed; opacity: {{ it.rowOpacity }};">
+                <input type="checkbox" checked="{{ it.checked }}" onChange="{{ it.toggle }}" style="width: 20px; height: 20px; margin: 0; cursor: pointer; accent-color: #1e3a6e;"/>
+                <div style="font-size: 12.5px; font-weight: 700; color: #111; min-width: 0;">{{ it.label }}</div>
+                <input value="{{ it.ab }}" onChange="{{ it.setAb }}" disabled="{{ it.off }}" style="width: 100%; border: 1px solid #ccc; border-radius: 4px; padding: 6px 6px; font-size: 12px; font-weight: 700; box-sizing: border-box; font-family: inherit;"/>
+                <select value="{{ it.mode }}" onChange="{{ it.setMode }}" disabled="{{ it.off }}" style="width: 100%; font-size: 11.5px; padding: 6px 2px; border: 1px solid #ccc; border-radius: 4px; background: white; font-family: inherit;">
+                  <option value="abbr">Abbrev only</option>
+                  <option value="full">Abbrev + label</option>
+                </select>
+                <div style="position: relative;">
+                  <button onClick="{{ it.openPicker }}" disabled="{{ it.off }}" title="{{ it.curName }}" aria-label="{{ it.curName }}" style="width: 100%; height: 30px; background: {{ it.curBg }}; border: 1px solid {{ it.curBorder }}; border-radius: 4px; cursor: pointer;"></button>
+                  <sc-if value="{{ it.pickerOpen }}" hint-placeholder-val="{{ false }}">
+                    <div onClick="{{ it.closePicker }}" style="position: fixed; inset: 0; z-index: 450;"></div>
+                    <div style="position: absolute; top: 100%; right: 0; margin-top: 6px; z-index: 451; background: white; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.18); padding: 8px; width: 176px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;">
+                      <sc-for list="{{ it.swatches }}" as="sw" hint-placeholder-count="8">
+                        <button onClick="{{ sw.select }}" title="{{ sw.title }}" aria-label="{{ sw.title }}" style="position: relative; background: {{ sw.bg }}; border: 1px solid {{ sw.borderCol }}; border-radius: 4px; height: 32px; cursor: pointer;">
+                          <sc-if value="{{ sw.selected }}" hint-placeholder-val="{{ false }}">
+                            <span style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: {{ sw.textColor }}; font-size: 15px; font-weight: 800;">✓</span>
+                          </sc-if>
+                        </button>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div>
+            <div style="font-size: 13px; font-weight: 800; color: #111;">Privileges</div>
+            <div style="font-size: 11.5px; color: #888; margin: 2px 0 10px;">Requested separately, the day after declaration.</div>
+            <div style="display: grid; grid-template-columns: 46px minmax(0,1fr) 60px 108px 96px; gap: 8px; font-size: 9px; font-weight: 800; color: #999; text-transform: uppercase; letter-spacing: 0.5px; padding-bottom: 4px;">
+              <div>Show</div><div>Item</div><div>Abbrev</div><div>Display</div><div>Colour</div>
+            </div>
+            <sc-for list="{{ privRows }}" as="it" hint-placeholder-count="10">
+              <div style="display: grid; grid-template-columns: 46px minmax(0,1fr) 60px 108px 96px; gap: 8px; align-items: center; padding: 7px 0; border-top: 1px solid #ededed; opacity: {{ it.rowOpacity }};">
+                <input type="checkbox" checked="{{ it.checked }}" onChange="{{ it.toggle }}" style="width: 20px; height: 20px; margin: 0; cursor: pointer; accent-color: #1e3a6e;"/>
+                <div style="font-size: 12.5px; font-weight: 700; color: #111; min-width: 0;">{{ it.label }}</div>
+                <input value="{{ it.ab }}" onChange="{{ it.setAb }}" disabled="{{ it.off }}" style="width: 100%; border: 1px solid #ccc; border-radius: 4px; padding: 6px 6px; font-size: 12px; font-weight: 700; box-sizing: border-box; font-family: inherit;"/>
+                <select value="{{ it.mode }}" onChange="{{ it.setMode }}" disabled="{{ it.off }}" style="width: 100%; font-size: 11.5px; padding: 6px 2px; border: 1px solid #ccc; border-radius: 4px; background: white; font-family: inherit;">
+                  <option value="abbr">Abbrev only</option>
+                  <option value="full">Abbrev + label</option>
+                </select>
+                <div style="position: relative;">
+                  <button onClick="{{ it.openPicker }}" disabled="{{ it.off }}" title="{{ it.curName }}" aria-label="{{ it.curName }}" style="width: 100%; height: 30px; background: {{ it.curBg }}; border: 1px solid {{ it.curBorder }}; border-radius: 4px; cursor: pointer;"></button>
+                  <sc-if value="{{ it.pickerOpen }}" hint-placeholder-val="{{ false }}">
+                    <div onClick="{{ it.closePicker }}" style="position: fixed; inset: 0; z-index: 450;"></div>
+                    <div style="position: absolute; top: 100%; right: 0; margin-top: 6px; z-index: 451; background: white; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.18); padding: 8px; width: 176px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;">
+                      <sc-for list="{{ it.swatches }}" as="sw" hint-placeholder-count="8">
+                        <button onClick="{{ sw.select }}" title="{{ sw.title }}" aria-label="{{ sw.title }}" style="position: relative; background: {{ sw.bg }}; border: 1px solid {{ sw.borderCol }}; border-radius: 4px; height: 32px; cursor: pointer;">
+                          <sc-if value="{{ sw.selected }}" hint-placeholder-val="{{ false }}">
+                            <span style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: {{ sw.textColor }}; font-size: 15px; font-weight: 800;">✓</span>
+                          </sc-if>
+                        </button>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="margin-top: 20px; border-top: 1px solid #ededed; padding-top: 14px;">
+          <div style="font-size: 13px; font-weight: 800; color: #111;">Dec notes</div>
+          <div style="font-size: 11.5px; color: #888; margin: 2px 0 10px;">Trainer's free text from “Any further privileges or information”, shown under the horse's row.</div>
+          <div style="display: grid; grid-template-columns: 46px minmax(0,1fr) 170px; gap: 8px; font-size: 9px; font-weight: 800; color: #999; text-transform: uppercase; letter-spacing: 0.5px; padding-bottom: 4px;">
+            <div>Show</div><div>Item</div><div>Display</div>
+          </div>
+          <div style="display: grid; grid-template-columns: 46px minmax(0,1fr) 170px; gap: 8px; align-items: center; padding: 7px 0; border-top: 1px solid #ededed;">
+            <input type="checkbox" checked="{{ decNotesOn }}" onChange="{{ toggleDecNotes }}" style="width: 20px; height: 20px; margin: 0; cursor: pointer; accent-color: #1e3a6e;"/>
+            <div style="font-size: 12.5px; font-weight: 700; color: #111; min-width: 0;">Dec notes</div>
+            <select value="{{ decNotesDefault }}" onChange="{{ setDecNotesDefault }}" disabled="{{ decNotesOff }}" style="width: 100%; font-size: 11.5px; padding: 6px 2px; border: 1px solid #ccc; border-radius: 4px; background: white; font-family: inherit;">
+              <option value="collapsed">Collapsed by default</option>
+              <option value="expanded">Expanded by default</option>
+            </select>
+          </div>
+        </div>
+
+        <sc-if value="{{ firstRun }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top: 20px; background: #f2f4f8; border: 1px solid #e0e0e0; padding: 14px 16px;">
+            <div style="font-size: 10px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Live preview — how a runner will look on your race card</div>
+            <div style="background: white; border: 1px solid #e0e0e0; display: flex; align-items: center; gap: 14px; padding: 10px 14px;">
+              <div style="text-align: center;">
+                <div style="font-size: 20px; font-weight: 800; color: #111; line-height: 1;">5</div>
+                <div style="font-size: 10px; color: #666;">[4]</div>
+              </div>
+              <div style="width: 44px; height: 44px; border-radius: 6px; background: #1a3a7a; display: flex; align-items: center; justify-content: center; font-weight: 800; color: white; font-size: 12px; border: 2px solid #ddd; flex-shrink: 0;">CZ</div>
+              <div style="min-width: 0;">
+                <div style="font-weight: 700; color: #1e3a6e; font-size: 13px;">CEZARRO (IRE)</div>
+                <div style="font-size: 11px; color: #555; margin: 1px 0 5px;">4YO/B/G · 9st 3lbs · David Probert</div>
+                <sc-if value="{{ previewHasChips }}" hint-placeholder-val="{{ true }}">
+                  <div style="display: flex; flex-wrap: wrap; gap: 4px;">
+                    <sc-for list="{{ previewChips }}" as="ch" hint-placeholder-count="4">
+                      <span style="background: {{ ch.bg }}; color: {{ ch.color }}; border: 1px solid {{ ch.border }}; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 3px; white-space: nowrap;">{{ ch.text }}</span>
+                    </sc-for>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ previewEmpty }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-size: 11px; color: #999; font-style: italic;">All items hidden — nothing will show on the card.</div>
+                </sc-if>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+      </sc-if>
+    </div>
+
+    <div style="border-top: 1px solid #e0e0e0; padding: 12px 20px; display: flex; align-items: center; gap: 12px; flex-shrink: 0;">
+      <sc-if value="{{ sectionPrivileges }}" hint-placeholder-val="{{ false }}">
+        <sc-if value="{{ confirmReset }}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <span style="font-size: 12px; font-weight: 700; color: #111;">Reset everything to defaults?</span>
+            <button onClick="{{ doReset }}" style="background: #dc2626; color: white; border: none; padding: 8px 14px; font-size: 12px; font-weight: 700; cursor: pointer;">Yes, reset</button>
+            <button onClick="{{ cancelReset }}" style="background: none; border: 1px solid #ccc; color: #555; padding: 8px 14px; font-size: 12px; font-weight: 600; cursor: pointer;">Cancel</button>
+          </div>
+        </sc-if>
+        <sc-if value="{{ notConfirmReset }}" hint-placeholder-val="{{ true }}">
+          <button onClick="{{ askReset }}" style="background: none; border: 1px solid #ccc; color: #555; padding: 9px 16px; font-size: 12.5px; font-weight: 600; cursor: pointer;">Reset to defaults</button>
+        </sc-if>
+      </sc-if>
+      <button onClick="{{ closePriv }}" style="background: #1e3a6e; color: white; border: none; padding: 10px 24px; font-size: 13px; font-weight: 700; cursor: pointer; margin-left: auto; white-space: nowrap;">{{ privDoneLabel }}</button>
+    </div>
+  </div>
+</sc-if>
+
+<!-- TOAST -->
+<sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+  <div style="position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1e3a6e; color: white; padding: 10px 20px; border-radius: 5px; font-size: 13px; font-weight: 600; box-shadow: 0 6px 20px rgba(0,0,0,0.25); z-index: 500; display: flex; align-items: center; gap: 14px;">
+    <span>{{ toast }}</span>
+    <sc-if value="{{ toastUndo }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ undoDelete }}" style="background: none; border: none; color: #8ec5ff; font-size: 13px; font-weight: 700; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; padding: 0;">Undo</button>
+    </sc-if>
+  </div>
+</sc-if>
+
+<!-- NOTIFICATIONS PANEL -->
+<div style="position: fixed; top: 0; left: 36px; width: 320px; height: 100vh; background: white; border-right: 1px solid #e0e0e0; box-shadow: 4px 0 16px rgba(0,0,0,0.12); display: flex; flex-direction: column; z-index: 55; transform: translateX({{ panelTransform }}); transition: transform 0.25s ease;">
+  <div style="background: #1e3a6e; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-shrink: 0;">
+    <div style="font-size: 13px; font-weight: 800; color: white; letter-spacing: 0.06em; text-transform: uppercase;">Notifications</div>
+    <sc-if value="{{ hasUnread }}" hint-placeholder-val="{{ true }}">
+      <button onClick="{{ markAllRead }}" style="background: none; border: none; cursor: pointer; font-size: 12px; font-weight: 700; color: #8ec5ff; padding: 2px 5px;">Mark all read</button>
+    </sc-if>
+  </div>
+  <div style="overflow-y: auto; flex: 1;">
+    <sc-for list="{{ notifications }}" as="n" hint-placeholder-count="3">
+      <div style="padding: 14px 16px 12px; border-bottom: 1px solid #e0e0e0; position: relative;">
+        <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+          <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: {{ n.color }};">{{ n.icon }} {{ n.label }}</div>
+          <sc-if value="{{ n.unread }}" hint-placeholder-val="{{ true }}">
+            <div style="width: 7px; height: 7px; background: #dc2626; border-radius: 50%; margin-left: auto; flex-shrink: 0;"></div>
+          </sc-if>
+        </div>
+        <div style="color: #333; margin-bottom: 8px; font-size: 13px; line-height: 1.4;">{{ n.text }}</div>
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+          <div style="font-size: 11px; color: #888;">{{ n.time }}</div>
+          <button onClick="{{ n.view }}" style="display: inline-flex; align-items: center; gap: 4px; background: none; border: none; padding: 0; margin-left: auto; cursor: pointer; font-size: 12px; font-weight: 600; color: #1e3a6e; text-decoration: underline; text-underline-offset: 2px;">View runner →</button>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    panelOpen: false,
+    highlightDraws: [],
+    unread: { nonrunner: true, enquiry: true, prior: true },
+    hideOpen: false,
+    hiddenCols: {},
+    introOpen: false,
+    ctStep: null,
+    privOpen: false,
+    enquiryOpen: false,
+    enquiryRow: null,
+    enquirySubject: 'jockey',
+    enquiryCategory: 'racecourse',
+    enquiryOffenceQuery: '',
+    enquiryOffenceOpen: false,
+    enquiryOffenceActive: 0,
+    enquiryOffenceSelectedId: null,
+    rulesOpen: false,
+    rulesQuery: '',
+    rulesContext: '',
+    firstRun: false,
+    confirmReset: false,
+    items: null,
+    toast: '',
+    editViewOpen: false,
+    annotating: true,
+    tool: 'pen',
+    color: '#111111',
+    saveLabel: 'Save',
+    savedNoteImg: '',
+    activeRaceIdx: 0,
+    displayMode: 'column',
+    expandedRows: {},
+    customiseSection: 'privileges',
+    raceInfoOpen: false,
+    coachOpen: false,
+    fixtureMenuOpen: false,
+    raceMenuOpen: false,
+    linksMenuOpen: false,
+    rowMenuDraw: null,
+    decNotesOn: true,
+    decNotesExpanded: false,
+    noteOverrides: {},
+    iconCommentsExpanded: false,
+    colWidths: {},
+    deletedComments: {},
+    lastDeletedComment: null,
+    toastUndo: false,
+    commentSettings: {
+      behavioural: { on: true, range: 'last10', autoFade: true },
+      welfare: { on: true, range: 'all' },
+      performance: { on: true, range: 'last1' },
+      equipment: { on: true, range: 'last1' },
+      interference: { on: true, range: 'last3' },
+      starters: { on: true, range: 'all' }
+    }
+  };
+
+  storageKey = 'bha-priv-settings-steward-001';
+  commentStorageKey = 'bha-comment-settings-steward-001';
+
+  declaredDefs = [
+    { id: 'b1', label: 'Blinkers first time', ab: 'B1', hi: true },
+    { id: 'b', label: 'Blinkers', ab: 'B' },
+    { id: 'tt', label: 'Tongue tie', ab: 'TT' },
+    { id: 'cp', label: 'Cheekpieces', ab: 'CP' },
+    { id: 'v', label: 'Visor', ab: 'V' },
+    { id: 'h', label: 'Hood', ab: 'H' },
+    { id: 'nb', label: 'Noseband', ab: 'NB' },
+  ];
+  privDefs = [
+    { id: 'rh', label: 'Red Hood', ab: 'RH', hi: true },
+    { id: 'e', label: 'Early to post', ab: 'E', hi: true },
+    { id: 'mc', label: 'Mounting at start', ab: 'MC', hi: true },
+    { id: 'fw', label: 'Wisp in front', ab: 'FW' },
+    { id: 'wits', label: 'Withdrawn if tongue strap', ab: 'WITS' },
+    { id: 'hp', label: 'Hood in parade ring', ab: 'HP' },
+    { id: 'earout', label: 'Earplugs out', ab: 'Ear out' },
+    { id: 'earin', label: 'Earplugs in', ab: 'Ear in' },
+    { id: 'lr', label: 'Loading with rug', ab: 'LR' },
+    { id: 'sr', label: 'Starters report', ab: 'SR', hi: true },
+  ];
+  allDefs = () => [...this.declaredDefs, ...this.privDefs];
+  defaultItems = () => {
+    const o = {};
+    this.allDefs().forEach(d => { o[d.id] = { on: true, ab: d.ab, mode: 'abbr', color: d.hi ? '#dc2626' : 'light' }; });
+    return o;
+  };
+
+  componentDidMount() {
+    const items = this.defaultItems();
+    try {
+      const raw = localStorage.getItem(this.storageKey);
+      if (raw) {
+        const saved = JSON.parse(raw);
+        Object.keys(items).forEach(id => {
+          if (!saved[id]) return;
+          items[id] = { ...items[id], ...saved[id] };
+          if (!saved[id].color) items[id].color = saved[id].priority === 'high' ? '#dc2626' : 'light';
+        });
+      }
+    } catch (e) {}
+    let commentSettings = this.state.commentSettings, displayMode = this.state.displayMode;
+    try {
+      const rawC = localStorage.getItem(this.commentStorageKey);
+      if (rawC) {
+        const savedC = JSON.parse(rawC);
+        commentSettings = { ...commentSettings };
+        Object.keys(commentSettings).forEach(id => {
+          if (savedC.settings && savedC.settings[id]) commentSettings[id] = { ...commentSettings[id], ...savedC.settings[id] };
+        });
+        displayMode = savedC.displayMode || displayMode;
+      }
+    } catch (e) {}
+    let coachOpen = false;
+    try { coachOpen = !localStorage.getItem(this.coachKey); } catch (e) {}
+    this.setState({ items, introOpen: false, commentSettings, displayMode, coachOpen });
+  }
+
+  persistComments = (commentSettings, displayMode) => {
+    try { localStorage.setItem(this.commentStorageKey, JSON.stringify({ settings: commentSettings, displayMode })); } catch (e) {}
+  };
+  toggleType = (id) => this.setState(s => {
+    const commentSettings = { ...s.commentSettings, [id]: { ...s.commentSettings[id], on: !s.commentSettings[id].on } };
+    this.persistComments(commentSettings, s.displayMode);
+    return { commentSettings };
+  });
+  setRange = (id, v) => this.setState(s => {
+    const commentSettings = { ...s.commentSettings, [id]: { ...s.commentSettings[id], range: v } };
+    this.persistComments(commentSettings, s.displayMode);
+    return { commentSettings };
+  });
+  toggleAutoFade = () => this.setState(s => {
+    const commentSettings = { ...s.commentSettings, behavioural: { ...s.commentSettings.behavioural, autoFade: !s.commentSettings.behavioural.autoFade } };
+    this.persistComments(commentSettings, s.displayMode);
+    return { commentSettings };
+  });
+  setDisplay = (v) => this.setState(s => {
+    this.persistComments(s.commentSettings, v);
+    return { displayMode: v };
+  });
+  toggleExpandRow = (draw) => this.setState(s => {
+    const def = s.displayMode === 'icon' && s.iconCommentsExpanded;
+    const current = s.expandedRows[draw] !== undefined ? s.expandedRows[draw] : def;
+    return { expandedRows: { ...s.expandedRows, [draw]: !current } };
+  });
+  setSection = (e) => this.setState({ customiseSection: e.target.value, confirmReset: false });
+  toggleDecNotes = () => this.setState(s => ({ decNotesOn: !s.decNotesOn }));
+  toggleRaceInfo = () => this.setState(s => ({ raceInfoOpen: !s.raceInfoOpen }));
+  toggleFixtureMenu = () => this.setState(s => ({ fixtureMenuOpen: !s.fixtureMenuOpen, raceMenuOpen: false, linksMenuOpen: false, rowMenuDraw: null }));
+  toggleRaceMenu = () => this.setState(s => ({ raceMenuOpen: !s.raceMenuOpen, fixtureMenuOpen: false, linksMenuOpen: false, rowMenuDraw: null }));
+  toggleLinksMenu = () => this.setState(s => ({ linksMenuOpen: !s.linksMenuOpen, fixtureMenuOpen: false, raceMenuOpen: false, rowMenuDraw: null }));
+  toggleRowMenu = (draw) => this.setState(s => ({ rowMenuDraw: s.rowMenuDraw === draw ? null : draw, fixtureMenuOpen: false, raceMenuOpen: false, linksMenuOpen: false }));
+  closeMenus = () => this.setState({ fixtureMenuOpen: false, raceMenuOpen: false, linksMenuOpen: false, rowMenuDraw: null });
+  runAction = (label) => {
+    if (this._toastTimer) clearTimeout(this._toastTimer);
+    this.closeMenus();
+    this.setState({ toast: label, toastUndo: false });
+    this._toastTimer = setTimeout(() => this.setState({ toast: '' }), 2500);
+  };
+  enquiryCategoryDefs = [
+    { value: 'racecourse', label: 'Racecourse' },
+    { value: 'stalls', label: 'Stalls' },
+    { value: 'weighing-room', label: 'Weighing Room' },
+    { value: 'declarations', label: 'Declarations' },
+  ];
+  openEnquiry = (r) => {
+    this.closeMenus();
+    this.setState({ enquiryOpen: true, enquiryRow: r, enquirySubject: 'jockey', enquiryCategory: 'racecourse', enquiryOffenceQuery: '', enquiryOffenceOpen: false, enquiryOffenceActive: 0, enquiryOffenceSelectedId: null });
+  };
+  closeEnquiry = () => this.setState({ enquiryOpen: false, enquiryRow: null });
+  setEnquirySubject = (e) => this.setState({ enquirySubject: e.target.value });
+  setEnquiryCategory = (e) => this.setState({ enquiryCategory: e.target.value });
+
+  ruleDefs = [
+    { code: 'C(4)', title: 'Misuse of the whip — repeated offences', excerpt: 'A jockey who has received two cautions for misuse of the whip in the same season will receive a suspension if a third offence is found, the length of which shall be determined by reference to the schedule of penalties at Appendix 8.', keywords: 'whip third offence caution suspension misuse' },
+    { code: 'C(1)', title: 'Careless riding', excerpt: 'A rider shall be guilty of careless riding if they fail to take reasonable steps to avoid causing interference, or ride in a manner which is careless.', keywords: 'careless riding interference' },
+    { code: 'Appendix 8', title: 'Schedule of penalties — interference & whip', excerpt: 'Where a third whip offence is recorded in a single season the minimum penalty shall be a suspension of seven days. Aggravating factors may increase the period.', keywords: 'appendix penalty schedule whip interference', appendix: true },
+    { code: 'F45', title: 'Improving placing by interference', excerpt: 'A rider or horse improving its placing by causing interference to another horse or its rider during the race shall be in breach of this rule.', keywords: 'placing interference improve' },
+    { code: 'F46', title: 'Manoeuvre allowing a clear run', excerpt: "A rider who makes a manoeuvre to allow another horse a clear run when improving her/his own placing shall be in breach of this rule.", keywords: 'manoeuvre clear run placing' },
+    { code: 'F12', title: 'Full opportunity to win or obtain best placing', excerpt: 'A rider must take all reasonable and permissible measures to ensure a horse is given a full opportunity to win or obtain the best possible placing.', keywords: 'full opportunity win placing measures' },
+    { code: 'F60', title: 'Improper, careless or dangerous riding', excerpt: 'Improper, careless or dangerous riding causing interference to another horse or rider during the race shall be in breach of this rule.', keywords: 'improper careless dangerous riding interference' },
+    { code: 'G9', title: 'Failing to weigh in', excerpt: 'A rider must weigh in promptly after the race. Failing to weigh in for any placing other than the first four shall carry Fee Code 1.', keywords: 'weigh in placing fee code 1' },
+    { code: 'G13.1', title: 'Weighing in overweight — 1lb, first four', excerpt: 'A rider weighing in at 1lb overweight, having finished in the first four placings, shall be in breach of this rule.', keywords: 'weighing overweight 1lb first four placing' },
+    { code: 'G13.2', title: 'Weighing in overweight — 2lbs or more, first four', excerpt: 'A rider weighing in at 2lbs or more overweight, having finished in the first four placings, shall be in breach of this rule.', keywords: 'weighing overweight 2lbs first four placing' },
+    { code: 'G13.3', title: 'Weighing in overweight — 2lbs or more, other placing', excerpt: 'A rider weighing in at 2lbs or more overweight, having finished outside the first four placings, shall be in breach of this rule.', keywords: 'weighing overweight 2lbs any other placing' },
+    { code: 'G14', title: 'Prompt weigh-in after a fall', excerpt: 'A rider must weigh in promptly after dismounting following a fall or unseating during the race.', keywords: 'weigh in fall unseating prompt' },
+    { code: 'G20', title: 'Reporting to the Clerk of the Scales', excerpt: 'A rider must report to the Clerk of the Scales before weighing out, in accordance with Fee Code 2.', keywords: 'clerk scales weighing out fee code 2' },
+  ];
+  openRulesDrawer = (query, context) => {
+    this.closeMenus();
+    this.setState({ rulesOpen: true, rulesQuery: query || '', rulesContext: context || '' });
+  };
+  closeRulesDrawer = () => this.setState({ rulesOpen: false });
+  setRulesQuery = (e) => this.setState({ rulesQuery: e.target.value, rulesContext: '' });
+  viewSelectedOffenceRule = (e) => {
+    e.preventDefault();
+    const offence = this.offenceDefs.find(o => o.id === this.state.enquiryOffenceSelectedId);
+    if (offence) this.openRulesDrawer(offence.code, 'suggested by enquiry context');
+  };
+  viewOffenceRule = (e, code) => {
+    e.preventDefault();
+    e.stopPropagation();
+    this.openRulesDrawer(code, 'suggested by enquiry context');
+  };
+  offenceDefs = [
+    { id: 'f45', family: 'F', code: 'F45', text: 'Improving placing by causing interference to another horse or its rider during the race' },
+    { id: 'f46', family: 'F', code: 'F46', text: "Rider makes a manoeuvre to allow another horse a clear run when improving her/his placing in a race" },
+    { id: 'f12', family: 'F', code: 'F12', text: "Rider fails to take all reasonable and permissible measures to ensure a horse is given a full opportunity to win or obtain the best possible placing" },
+    { id: 'f60', family: 'F', code: 'F60', text: 'Improper, careless or dangerous riding causing interference to another horse or rider during the race' },
+    { id: 'g9', family: 'G', code: 'G9', feeCode: 'Fee Code 1', text: 'Failing to weigh in - Any other placing' },
+    { id: 'g13-1', family: 'G', code: 'G13.1', text: 'Weighing in at 1lb overweight - First four placing' },
+    { id: 'g13-2', family: 'G', code: 'G13.2', text: 'Weighing in at 2lbs or more overweight - First four placing' },
+    { id: 'g13-3', family: 'G', code: 'G13.3', text: 'Weighing in at 2lbs or more overweight - Any other placing' },
+    { id: 'g14', family: 'G', code: 'G14', text: 'Failing to weigh in promptly after dismounting following a fall or unseating' },
+    { id: 'g20', family: 'G', code: 'G20', feeCode: 'Fee Code 2', text: 'Failing to report to the Clerk of the Scales before weighing out' },
+  ];
+  splitHighlight = (source, query) => {
+    if (!query) return { before: source, match: '', after: '' };
+    const idx = source.toLowerCase().indexOf(query.toLowerCase());
+    if (idx < 0) return { before: source, match: '', after: '' };
+    return { before: source.slice(0, idx), match: source.slice(idx, idx + query.length), after: source.slice(idx + query.length) };
+  };
+  setEnquiryOffenceQuery = (e) => this.setState({ enquiryOffenceQuery: e.target.value, enquiryOffenceOpen: true, enquiryOffenceActive: 0 });
+  openEnquiryOffence = () => this.setState({ enquiryOffenceOpen: true });
+  closeEnquiryOffence = () => this.setState({ enquiryOffenceOpen: false });
+  selectEnquiryOffence = (id) => this.setState({ enquiryOffenceSelectedId: id, enquiryOffenceOpen: false, enquiryOffenceQuery: '' });
+  clearEnquiryOffence = () => this.setState({ enquiryOffenceSelectedId: null, enquiryOffenceQuery: '', enquiryOffenceOpen: true, enquiryOffenceActive: 0 });
+  enquiryOffenceKeyDown = (e) => {
+    const flat = this._offenceFlat || [];
+    if (e.key === 'ArrowDown') { e.preventDefault(); this.setState(s => ({ enquiryOffenceOpen: true, enquiryOffenceActive: Math.min((s.enquiryOffenceActive || 0) + 1, flat.length - 1) })); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); this.setState(s => ({ enquiryOffenceActive: Math.max((s.enquiryOffenceActive || 0) - 1, 0) })); }
+    else if (e.key === 'Enter') { e.preventDefault(); const item = flat[this.state.enquiryOffenceActive]; if (item) this.selectEnquiryOffence(item.id); }
+    else if (e.key === 'Escape') { this.setState({ enquiryOffenceOpen: false }); }
+  };
+  saveEnquiry = () => {
+    const offence = this.offenceDefs.find(o => o.id === this.state.enquiryOffenceSelectedId);
+    if (!offence) return;
+    const r = this.state.enquiryRow;
+    const name = r ? (this.state.enquirySubject === 'jockey' ? r.jockey : this.state.enquirySubject === 'trainer' ? r.trainer : r.name) : '';
+    if (this._toastTimer) clearTimeout(this._toastTimer);
+    this.setState({ enquiryOpen: false, enquiryRow: null, toast: 'Enquiry created for ' + name + ' — ' + offence.code, toastUndo: false });
+    this._toastTimer = setTimeout(() => this.setState({ toast: '' }), 2500);
+  };
+  mkActions = (labels) => labels.map(l => {
+    const label = typeof l === 'string' ? l : l.label;
+    const disabled = typeof l === 'string' ? false : !!l.disabled;
+    return { label, disabled, color: disabled ? '#999' : '#111', cursor: disabled ? 'default' : 'pointer', run: disabled ? (() => {}) : (() => this.runAction(label)) };
+  });
+  coachKey = 'bha-coach-customise-seen';
+  dismissCoach = () => { try { localStorage.setItem(this.coachKey, '1'); } catch (e) {} this.setState({ coachOpen: false }); };
+  coachOpenPanel = () => { try { localStorage.setItem(this.coachKey, '1'); } catch (e) {} this.setState({ coachOpen: false, privOpen: true, customiseSection: null, confirmReset: false }); };
+  protoCoach = () => { try { localStorage.removeItem(this.coachKey); } catch (e) {} this.setState({ coachOpen: true, privOpen: false, introOpen: false, toast: '' }); };
+  setDecNotesDefault = (e) => { const v = e.target.value === 'expanded'; this.setState({ decNotesExpanded: v, noteOverrides: {} }); };
+  setIconCommentsDefault = (e) => { const v = e.target.value === 'expanded'; this.setState({ iconCommentsExpanded: v, expandedRows: {} }); };
+  stopProp = (e) => e.stopPropagation();
+  startResize = (id, e) => {
+    e.preventDefault();
+    const cell = e.currentTarget.parentElement;
+    const startX = e.clientX;
+    const startW = cell.offsetWidth;
+    const move = (ev) => {
+      const next = Math.max(56, Math.round(startW + (ev.clientX - startX)));
+      this.setState(s => ({ colWidths: { ...s.colWidths, [id]: next } }));
+    };
+    const up = () => { window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); };
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', up);
+  };
+  deleteComment = (key, horseName, text) => {
+    if (this._toastTimer) clearTimeout(this._toastTimer);
+    this.setState(s => ({ deletedComments: { ...s.deletedComments, [key]: { horseName, text } }, lastDeletedComment: key, toast: 'Comment removed — restore anytime from "Customise card"', toastUndo: true }));
+    this._toastTimer = setTimeout(() => this.setState({ toast: '', toastUndo: false }), 5000);
+  };
+  undoDelete = () => {
+    if (this._toastTimer) clearTimeout(this._toastTimer);
+    this.setState(s => {
+      const deletedComments = { ...s.deletedComments };
+      delete deletedComments[s.lastDeletedComment];
+      return { deletedComments, lastDeletedComment: null, toast: '', toastUndo: false };
+    });
+  };
+  restoreComment = (key) => this.setState(s => {
+    const deletedComments = { ...s.deletedComments };
+    delete deletedComments[key];
+    return { deletedComments };
+  });
+
+  persist = (items) => { try { localStorage.setItem(this.storageKey, JSON.stringify(items)); } catch (e) {} };
+  setItem = (id, patch) => this.setState(s => {
+    const items = { ...s.items, [id]: { ...s.items[id], ...patch } };
+    this.persist(items);
+    return { items };
+  });
+
+  introSetup = () => { this.persist(this.state.items || this.defaultItems()); this.setState({ introOpen: false, privOpen: true, customiseSection: 'privileges', firstRun: true }); };
+  introSkip = () => {
+    this.persist(this.state.items || this.defaultItems());
+    this.setState({ introOpen: false, toast: 'Using standard abbreviations — customise any time from "Customise card"' });
+    setTimeout(() => this.setState({ toast: '' }), 3500);
+  };
+  protoFirstTime = () => {
+    try { localStorage.removeItem(this.storageKey); } catch (e) {}
+    this.setState({ items: this.defaultItems(), introOpen: true, privOpen: false, ctStep: null, enquiryOpen: false, coachOpen: false, firstRun: false, confirmReset: false, toast: '' });
+  };
+  defaultCommentSettings = () => ({
+    behavioural: { on: true, range: 'last10', autoFade: true },
+    welfare: { on: true, range: 'all' },
+    performance: { on: true, range: 'last1' },
+    equipment: { on: true, range: 'last1' },
+    interference: { on: true, range: 'last3' },
+    starters: { on: true, range: 'all' }
+  });
+  protoFirstTimeComments = () => {
+    try { localStorage.removeItem(this.commentStorageKey); } catch (e) {}
+    this.setState({ commentSettings: this.defaultCommentSettings(), displayMode: 'column', expandedRows: {}, privOpen: false, introOpen: false, ctStep: 'intro', enquiryOpen: false, coachOpen: false, confirmReset: false, toast: '' });
+  };
+  ctOrder = ['intro', 'configure', 'display', 'review'];
+  ctNext = () => this.setState(s => ({ ctStep: this.ctOrder[this.ctOrder.indexOf(s.ctStep) + 1] }));
+  ctBack = () => this.setState(s => ({ ctStep: this.ctOrder[this.ctOrder.indexOf(s.ctStep) - 1] }));
+  ctSkip = () => {
+    this.setState({ ctStep: null, toast: 'Using standard comment settings — customise any time from "Customise card"' });
+    setTimeout(() => this.setState({ toast: '' }), 3500);
+  };
+  ctFinish = () => {
+    this.setState({ ctStep: null, toast: 'Race card saved — your settings apply automatically' });
+    setTimeout(() => this.setState({ toast: '' }), 3000);
+  };
+  filterCtPreview = (c) => {
+    const s = this.state.commentSettings[c.type];
+    if (!s || !s.on) return null;
+    const faded = c.type === 'behavioural' && s.autoFade && (c.cleanRunsSince || 0) >= 10;
+    if (c.type !== 'starters' && !faded) {
+      const within = s.range === 'all' || (s.range === 'last1' && c.runsAgo <= 1) || (s.range === 'last3' && c.runsAgo <= 3) || (s.range === 'last10' && c.runsAgo <= 10);
+      if (!within) return null;
+    }
+    return { ...c, opacity: faded ? 0.45 : 1, fadeNote: faded ? ('Faded — ' + c.cleanRunsSince + ' clean runs since this flag') : '' };
+  };
+  openPriv = () => this.setState({ privOpen: true, firstRun: false, confirmReset: false, customiseSection: null });
+  closePriv = () => {
+    const msg = this.state.firstRun ? 'Race card saved — your settings apply automatically' : '';
+    this.setState({ privOpen: false, firstRun: false, confirmReset: false, toast: msg });
+    if (msg) setTimeout(() => this.setState({ toast: '' }), 3000);
+  };
+  askReset = () => this.setState({ confirmReset: true });
+  cancelReset = () => this.setState({ confirmReset: false });
+  doReset = () => {
+    const items = this.defaultItems();
+    this.persist(items);
+    this.setState({ items, confirmReset: false, toast: 'Settings reset to defaults' });
+    setTimeout(() => this.setState({ toast: '' }), 2500);
+  };
+
+  chipFor = (id) => {
+    const items = this.state.items || this.defaultItems();
+    const s = items[id];
+    if (!s || !s.on || s.mode === 'hide') return null;
+    const def = this.allDefs().find(d => d.id === id);
+    const text = s.mode === 'full' ? s.ab + ' ' + def.label : s.ab;
+    const c = s.color || 'light';
+    if (c === 'light') return { text, bg: '#e8edf6', color: '#1e3a6e', border: '#c9d4e8' };
+    return { text, bg: c, color: 'white', border: c };
+  };
+
+  filterComment = (c) => {
+    const s = this.state.commentSettings[c.type];
+    if (!s || !s.on) return null;
+    if (c.type === 'behavioural' && s.autoFade && (c.cleanRunsSince || 0) >= 10) return null;
+    const within = s.range === 'all' || c.type === 'starters' || (s.range === 'last1' && c.runsAgo <= 1) || (s.range === 'last3' && c.runsAgo <= 3) || (s.range === 'last10' && c.runsAgo <= 10);
+    if (!within) return null;
+    return { ...c };
+  };
+
+  races = [
+    { time: '2:15', name: 'THE DOWNLOAD THE AT THE RACES APP SELLING HANDICAP STAKES', classNum: '6', going: 'Good to Firm', distance: '1m', forText: '4YO+', rateText: '66 – 85', valueText: '£25,000.00' },
+    { time: '2:38', name: 'THE JENNINGSBET IN BEXHILL ON SEA APPRENTICE CLASSIFIED STAKES', classNum: '6', going: 'Good to Firm, Good (in places)', distance: '6f 210y', forText: '3YO+ 0 - 50', rateText: '0 – 50', valueText: '£8,000.00' },
+    { time: '3:13', name: 'THE JENNINGSBET LADIES DAY RESTRICTED NOVICE STAKES', classNum: '4', going: 'Good to Firm, Good (in places)', distance: '6f 210y', forText: '2YO', rateText: '—', valueText: '£10,000.00' },
+    { time: '3:50', name: 'THE JENNINGSBET IN HASTINGS HANDICAP STAKES', classNum: '6', going: 'Good to Firm, Good (in places)', distance: '7f 216y', forText: '4YO+ 46 - 65', rateText: '46 – 65', valueText: '£8,000.00' },
+    { time: '4:25', name: 'THE JENNINGSBET IN BASINGSTOKE BRIGHTON CHALLENGE CUP HANDICAP STAKES', classNum: '4', going: 'Good to Firm, Good (in places)', distance: '1m 3f 198y', forText: '3YO+ 61 - 80', rateText: '61 – 80', valueText: '£20,000.00' },
+    { time: '4:55', name: 'THE JENNINGSBET TOP STAFF CLASSIFIED STAKES', classNum: '6', going: 'Good to Firm, Good (in places)', distance: '1m 3f 198y', forText: '3YO+ 0 - 50', rateText: '0 – 50', valueText: '£8,000.00' },
+    { time: '5:30', name: 'THE JENNINGSBET IN BRIGHTON HANDICAP STAKES', classNum: '5', going: 'Good to Firm, Good (in places)', distance: '6f 210y', forText: '4YO+ 56 - 75', rateText: '56 – 75', valueText: '£10,000.00' },
+  ];
+
+  raceRunners = {
+    1: [
+      { draw: 1, stall: 1, silkBg: '#2a7a2a', silkText: 'AA', name: "APPLE'S ANGEL (IRE)", details: '4YO/C/F', weight: '9st 9lbs', form: '60-0046', rating: '33 (45)', pound: '', sampled: 'Sampled 26/07/25', jockey: 'Owen Lewis(5)', trainer: 'Jim Boyle', owner: 'Mr P and Mrs L Ro…', badge: '', badgeBg: '', badgeColor: '', items: ['h'], pos: '–', lengths: '', rowBg: 'white', nonRunner: false, lastRan: 'Ran (F) 29 days ago' },
+      { draw: 2, stall: 8, silkBg: '#cc2222', silkText: 'BB', name: 'BARNSNAPE BOY (GB)', details: '5YO/G/G', weight: '9st 9lbs', form: '001440', rating: '30 (47)', pound: '', sampled: 'Sampled 09/06/26', jockey: 'Donagh Murphy(5)', trainer: 'Jim Boyle', owner: 'The Lockdown Syn…', badge: '', badgeBg: '', badgeColor: '', items: [], pos: '–', lengths: '', rowBg: '#f8f8f8', nonRunner: false, lastRan: 'Ran (F) 14 days ago' },
+      { draw: 3, stall: 3, silkBg: '#e8c830', silkText: 'PH', name: 'PORT HEDLAND (GB)', details: '5YO/B/G', weight: '9st 9lbs', form: '006105', rating: '35 (50)', pound: '', sampled: 'Sampled 05/06/26', jockey: 'Matthew Lloyd Slat…', trainer: 'Tony Carroll', owner: 'Mark Wellbelove & …', badge: '', badgeBg: '', badgeColor: '', items: ['h'], pos: '–', lengths: '', rowBg: 'white', nonRunner: false, lastRan: 'Ran (F) 22 days ago' },
+      { draw: 4, stall: 2, silkBg: '#1a3a7a', silkText: 'RW', name: 'RIVER WHARFE (GB)', details: '8YO/C/G', weight: '9st 9lbs', form: '060605', rating: '50 (50)', pound: '', sampled: 'Sampled 19/08/25', jockey: 'Molly Gunn(5)', trainer: 'Tony Carroll', owner: 'Mr A. W. Carroll', badge: '', badgeBg: '', badgeColor: '', items: ['cp'], pos: '–', lengths: '', rowBg: '#f8f8f8', nonRunner: false, lastRan: 'Ran (F) 16 days ago' },
+      { draw: 5, stall: 5, silkBg: '#5a2d82', silkText: 'RM', name: 'ROCK MASTER (IRE)', details: '4YO/B/G', weight: '9st 9lbs', form: '0-00006', rating: '35 (41)', pound: '', sampled: '', jockey: 'Myla Coppins(5)', trainer: 'Tony Carroll', owner: 'KHDRP', badge: '', badgeBg: '', badgeColor: '', items: ['cp'], pos: '–', lengths: '', rowBg: 'white', nonRunner: false, lastRan: 'Ran (F) 14 days ago' },
+      { draw: 6, stall: 7, silkBg: '#c46a00', silkText: 'SD', name: 'SPIRITED DANCER (GB)', details: '4YO/B/F', weight: '9st 9lbs', form: '052206', rating: '41 (47)', pound: '', sampled: 'Sampled 22/07/24', jockey: 'Warren Fentiman', trainer: 'Daniel & Claire Kub…', owner: 'Ludgershall Racing', badge: '', badgeBg: '', badgeColor: '', items: ['cp'], pos: '–', lengths: '', rowBg: '#f8f8f8', nonRunner: false, lastRan: 'Ran (F) 5 days ago' },
+      { draw: 7, stall: 6, silkBg: '#1a6a4a', silkText: 'VA', name: 'VALADERO (IRE)', details: '5YO/C/G', weight: '9st 9lbs', form: '506-003', rating: '46 (48)', pound: '', sampled: 'Sampled 15/01/24', jockey: 'Liam Wright', trainer: 'Brian Toomey', owner: 'Mr P. Fallon', badge: '', badgeBg: '', badgeColor: '', items: ['b'], pos: '–', lengths: '', rowBg: 'white', nonRunner: false, lastRan: 'Ran (F) 40 days ago' },
+      { draw: 8, stall: 4, silkBg: '#3a3a3a', silkText: 'VR', name: 'VOODOO RAY (IRE)', details: '7YO/C/G', weight: '9st 9lbs', form: '540-004', rating: '34 (41)', pound: '', sampled: 'Sampled 07/06/24', jockey: 'Jude Fernandes(7)', trainer: 'Gary & Josh Moore', owner: 'Sunville Rail Limited', badge: '', badgeBg: '', badgeColor: '', items: ['b'], pos: '–', lengths: '', rowBg: '#f8f8f8', nonRunner: false, lastRan: 'Ran (F) 48 days ago' },
+    ],
+    2: [
+      { draw: 1, stall: 3, silkBg: '#2a7a2a', silkText: 'DE', name: 'DEMONSTRATE (GB)', details: '2YO/C/C', weight: '9st 7lbs', form: '0', rating: '0 (999)', pound: '', sampled: '', jockey: 'Kaiya Fraser', trainer: 'Oliver Cole', owner: 'P. F. I. Cole Ltd', badge: '', badgeBg: '', badgeColor: '', items: [], pos: '–', lengths: '', rowBg: 'white', nonRunner: false, lastRan: 'Ran (F) 8 days ago' },
+      { draw: 2, stall: 5, silkBg: '#cc2222', silkText: 'FO', name: 'FOSCARINI (IRE)', details: '2YO/B/C', weight: '9st 7lbs', form: '56', rating: '66 (999)', pound: '', sampled: '', jockey: 'Charles Bishop', trainer: 'Eve Johnson Houg…', owner: 'Mick and Janice Ma…', badge: '', badgeBg: '', badgeColor: '', items: [], pos: '–', lengths: '', rowBg: '#f8f8f8', nonRunner: false, lastRan: 'Ran (F) 35 days ago' },
+      { draw: 3, stall: 1, silkBg: '#e8c830', silkText: 'RE', name: 'REGALISM (IRE)', details: '2YO/B/C', weight: '9st 7lbs', form: '5', rating: '62 (999)', pound: '', sampled: '', jockey: 'Harry Burns(3)', trainer: 'William Haggas', owner: 'Mr Abubaker Kadoura', badge: '', badgeBg: '', badgeColor: '', items: [], pos: '–', lengths: '', rowBg: 'white', nonRunner: false, lastRan: 'Ran (F) 18 days ago' },
+      { draw: 4, stall: 4, silkBg: '#1a3a7a', silkText: 'CC', name: 'CINQ COINS (GB)', details: '2YO/C/C', weight: '9st 4lbs', form: '', rating: '', pound: '', sampled: '', jockey: 'William Carson', trainer: 'Roger Teal', owner: 'Groves Martin Park…', badge: 'Debut', badgeBg: '#111', badgeColor: 'white', items: [], pos: '–', lengths: '', rowBg: '#f8f8f8', nonRunner: false, lastRan: 'Unraced' },
+      { draw: 5, stall: 2, silkBg: '#5a2d82', silkText: 'MK', name: 'THE MONKEY KING (GB)', details: '2YO/B/G', weight: '9st 4lbs', form: '63', rating: '67 (999)', pound: '', sampled: '', jockey: 'Rhys Clutterbuck', trainer: 'Ralph Beckett', owner: 'King Power Racing …', badge: '', badgeBg: '', badgeColor: '', items: [], pos: '–', lengths: '', rowBg: 'white', nonRunner: false, lastRan: 'Ran (F) 18 days ago' },
+    ],
+    3: [
+      { draw: 1, stall: 2, silkBg: '#2a7a2a', silkText: 'DG', name: 'DANDY G BOY (IRE)', details: '4YO/C/G', weight: '9st 9lbs', form: '3142-66', rating: '55 (65)', pound: '', sampled: 'Sampled 22/07/25', jockey: 'Charles Bishop', trainer: 'Warren Greatrex', owner: 'Mrs S. Such', badge: '', badgeBg: '', badgeColor: '', items: ['cp'], pos: '–', lengths: '', rowBg: 'white', nonRunner: false, lastRan: 'Ran (F) 22 days ago' },
+      { draw: 2, stall: 4, silkBg: '#cc2222', silkText: 'BO', name: 'BOUBYAN (IRE)', details: '4YO/B/G', weight: '9st 8lbs', form: '002543', rating: '63 (64)', pound: '', sampled: 'Sampled 03/07/25', jockey: 'Kaiya Fraser', trainer: 'Michael Appleby', owner: 'Mr Matthew Taylor', badge: '', badgeBg: '', badgeColor: '', items: ['cp'], pos: '–', lengths: '', rowBg: '#f8f8f8', nonRunner: false, lastRan: 'Ran (F) 13 days ago' },
+      { draw: 3, stall: 3, silkBg: '#e8c830', silkText: 'GR', name: 'GONE ROGUE (IRE)', details: '5YO/B/G', weight: '9st 8lbs', form: '2-25614', rating: '61 (64)', pound: '', sampled: 'Sampled 07/10/25', jockey: 'Tom Queally', trainer: 'Gary & Josh Moore', owner: 'Palace Racing', badge: '', badgeBg: '', badgeColor: '', items: ['cp'], pos: '–', lengths: '', rowBg: 'white', nonRunner: false, lastRan: 'Ran (F) 13 days ago' },
+      { draw: 4, stall: 6, silkBg: '#1a3a7a', silkText: 'DS', name: 'DANEHILL STAR (IRE)', details: '5YO/B/G', weight: '9st 5lbs', form: '143323', rating: '61 (61)', pound: '', sampled: 'Sampled 05/04/25', jockey: 'William Carson', trainer: 'Tony Carroll', owner: 'The Rebelle Boys', badge: '', badgeBg: '', badgeColor: '', items: ['cp'], pos: '–', lengths: '', rowBg: '#f8f8f8', nonRunner: false, lastRan: 'Ran (F) 16 days ago' },
+      { draw: 5, stall: 5, silkBg: '#5a2d82', silkText: 'KW', name: 'KONDRATIEV WAVE (IRE)', details: '9YO/C/G', weight: '9st 0lbs', form: '422462', rating: '56 (56)', pound: '', sampled: 'Sampled 03/06/24', jockey: 'Jack Doughty', trainer: 'Tony Carroll', owner: 'Betchworth Pin See…', badge: '', badgeBg: '', badgeColor: '', items: ['cp'], pos: '–', lengths: '', rowBg: 'white', nonRunner: false, lastRan: 'Ran (F) 16 days ago' },
+      { draw: 6, stall: 1, silkBg: '#c46a00', silkText: 'WI', name: 'WINEMAKER (FR)', details: '6YO/B/G', weight: '8st 13lbs', form: '5-14030', rating: '33 (55)', pound: '', sampled: '', jockey: 'Finley Marsh', trainer: 'Richard Hughes', owner: 'Mrs Alexandra Matt…', badge: '', badgeBg: '', badgeColor: '', items: ['h'], pos: '–', lengths: '', rowBg: '#f8f8f8', nonRunner: false, lastRan: 'Ran (F) 30 days ago' },
+    ],
+    4: [
+      { draw: 1, stall: 6, silkBg: '#2a7a2a', silkText: 'NG', name: 'NIBRAS GOLD (IRE)', details: '8YO/B/G', weight: '10st 1lbs', form: '16152-1', rating: '76 (76)', pound: '', sampled: 'Sampled 16/04/25', jockey: 'Pat Dobbs', trainer: 'James Owen', owner: 'Value Racing - Nibr…', badge: '', badgeBg: '', badgeColor: '', items: ['tt', 'cp'], pos: '–', lengths: '', rowBg: 'white', nonRunner: false, lastRan: 'Ran (F) 25 days ago' },
+      { draw: 2, stall: 3, silkBg: '#cc2222', silkText: 'MM', name: 'MAASAI MARA (GB)', details: '6YO/B/G', weight: '10st 0lbs', form: '00/-4020', rating: '64 (75)', pound: '', sampled: 'Sampled 01/11/25', jockey: 'William Carson', trainer: "John O'Shea", owner: 'Exors of the Late M…', badge: '', badgeBg: '', badgeColor: '', items: ['b'], pos: '–', lengths: '', rowBg: '#f8f8f8', nonRunner: false, lastRan: 'Ran (F) 54 days ago' },
+      { draw: 3, stall: 1, silkBg: '#e8c830', silkText: 'SA', name: 'SARANGPUR (IRE)', details: '4YO/B/G', weight: '9st 13lbs', form: '341121', rating: '74 (74)', pound: '', sampled: 'Sampled 21/06/26', jockey: 'Finley Marsh', trainer: 'Richard Hughes', owner: 'Mr J. Maloney', badge: '', badgeBg: '', badgeColor: '', items: [], pos: '–', lengths: '', rowBg: 'white', nonRunner: false, lastRan: 'Ran (F) 13 days ago' },
+      { draw: 4, stall: 5, silkBg: '#1a3a7a', silkText: 'BH', name: 'BRAVE HUNTER (GB)', details: '3YO/C/C', weight: '9st 9lbs', form: '0-62025', rating: '80 (80)', pound: '', sampled: 'Sampled 04/06/26', jockey: 'Benoit de la Sayette', trainer: 'Ismail Mohammed …', owner: 'Mr Abdulla Al Mans…', badge: 'V1 – First time', badgeBg: '#111', badgeColor: 'white', items: ['v'], pos: '–', lengths: '', rowBg: '#f8f8f8', nonRunner: false, lastRan: 'Ran (F) 27 days ago' },
+      { draw: 5, stall: 4, silkBg: '#5a2d82', silkText: 'BB', name: 'BOHEMIAN BREEZE (IRE)', details: '6YO/G/G', weight: '9st 3lbs', form: '044011', rating: '64 (64)', pound: '', sampled: 'Sampled 30/06/26', jockey: 'Warren Fentiman(3)', trainer: 'Gary & Josh Moore', owner: 'Moore Racing Synd…', badge: '', badgeBg: '', badgeColor: '', items: ['cp'], pos: '–', lengths: '', rowBg: 'white', nonRunner: false, lastRan: 'Ran (F) 36 days ago' },
+      { draw: 6, stall: 2, silkBg: '#c46a00', silkText: 'TH', name: 'TAI HANG PEGASUS (USA)', details: '3YO/B/G', weight: '9st 1lbs', form: '6-40623', rating: '72 (72)', pound: '', sampled: 'Sampled 27/05/25', jockey: 'Paddy Bradley', trainer: 'Charlie Fellowes', owner: 'M F Tung & J Kung', badge: '', badgeBg: '', badgeColor: '', items: [], pos: '–', lengths: '', rowBg: '#f8f8f8', nonRunner: false, lastRan: 'Ran (F) 18 days ago' },
+    ],
+    5: [
+      { draw: 1, stall: 2, silkBg: '#2a7a2a', silkText: 'AG', name: 'ALEX THE GREAT (IRE)', details: '6YO/G/G', weight: '9st 9lbs', form: '000504', rating: '39 (44)', pound: '', sampled: 'Sampled 29/01/25', jockey: 'Myla Coppins(5)', trainer: 'Tony Carroll', owner: 'Mill House Racing …', badge: '', badgeBg: '', badgeColor: '', items: ['b', 'tt'], pos: '–', lengths: '', rowBg: 'white', nonRunner: false, lastRan: 'Ran (F) 11 days ago' },
+      { draw: 2, stall: 1, silkBg: '#cc2222', silkText: 'DO', name: 'DOGGED (GB)', details: '9YO/B/G', weight: '9st 9lbs', form: '0-00265', rating: '35 (46)', pound: '', sampled: 'Sampled 08/07/23', jockey: 'William Carson', trainer: 'Tony Carroll', owner: 'Mr M. Harvey', badge: '', badgeBg: '', badgeColor: '', items: ['b'], pos: '–', lengths: '', rowBg: '#f8f8f8', nonRunner: false, lastRan: 'Ran (F) 11 days ago' },
+      { draw: 3, stall: 5, silkBg: '#e8c830', silkText: 'FX', name: 'FOINIX (GB)', details: '6YO/B/G', weight: '9st 9lbs', form: '20-0003', rating: '41 (46)', pound: '', sampled: 'Sampled 19/08/25', jockey: 'Finley Marsh', trainer: 'Jim & Suzi Best', owner: 'Mr M Robinson, Ja…', badge: '', badgeBg: '', badgeColor: '', items: ['b'], pos: '–', lengths: '', rowBg: 'white', nonRunner: false, lastRan: 'Ran (F) 44 days ago' },
+      { draw: 4, stall: 3, silkBg: '#1a3a7a', silkText: 'GP', name: "GEARING'S POINT (GB)", details: '8YO/B/F', weight: '9st 9lbs', form: '525014', rating: '21 (50)', pound: '', sampled: 'Sampled 22/06/26', jockey: 'George Bass', trainer: 'Sheena West', owner: 'Mr Shane Francis', badge: '', badgeBg: '', badgeColor: '', items: ['cp'], pos: '–', lengths: '', rowBg: '#f8f8f8', nonRunner: false, lastRan: 'Ran (F) 1 day ago' },
+      { draw: 5, stall: 6, silkBg: '#5a2d82', silkText: 'DI', name: 'DREAM OF ITHACA (GB)', details: '3YO/B/F', weight: '8st 13lbs', form: '00-4550', rating: '31 (47)', pound: '', sampled: '', jockey: 'Liam Wright(5)', trainer: 'John Gallagher', owner: 'Andrew Bell and Mi…', badge: '', badgeBg: '', badgeColor: '', items: [], pos: '–', lengths: '', rowBg: 'white', nonRunner: false, lastRan: 'Ran (F) 58 days ago' },
+      { draw: 6, stall: 4, silkBg: '#c46a00', silkText: 'LL', name: 'LADY LAUREN (IRE)', details: '3YO/B/F', weight: '8st 13lbs', form: '23-6506', rating: '38 (43)', pound: '', sampled: 'Sampled 05/02/26', jockey: 'Owen Lewis(5)', trainer: 'Ed de Giles', owner: 'Lilly Hall Syndicates', badge: '', badgeBg: '', badgeColor: '', items: [], pos: '–', lengths: '', rowBg: '#f8f8f8', nonRunner: false, lastRan: 'Ran (F) 39 days ago' },
+    ],
+    6: [
+      { draw: 1, stall: 7, silkBg: '#2a7a2a', silkText: 'ST', name: 'SILVER TRUMPET (GB)', details: '5YO/G/G', weight: '9st 9lbs', form: '5-43061', rating: '75 (75)', pound: '', sampled: 'Sampled 09/07/26', jockey: 'Charles Bishop', trainer: 'Eve Johnson Houg…', owner: 'Austin, June & Jon…', badge: '', badgeBg: '', badgeColor: '', items: ['cp'], pos: '–', lengths: '', rowBg: 'white', nonRunner: false, lastRan: 'Ran (F) 27 days ago' },
+      { draw: 2, stall: 2, silkBg: '#cc2222', silkText: 'NV', name: 'NORTH VIEW (GB)', details: '5YO/B/G', weight: '9st 9lbs', form: '400602', rating: '75 (75)', pound: '', sampled: 'Sampled 11/01/26', jockey: 'Olivia Haines(7)', trainer: 'Stuart Williams', owner: 'Mrs J. Morley', badge: '', badgeBg: '', badgeColor: '', items: ['v'], pos: '–', lengths: '', rowBg: '#f8f8f8', nonRunner: false, lastRan: 'Ran (F) 13 days ago' },
+      { draw: 3, stall: 3, silkBg: '#e8c830', silkText: 'DB', name: 'DION BAKER (IRE)', details: '7YO/B/G', weight: '9st 7lbs', form: '131130', rating: '47 (73)', pound: '', sampled: 'Sampled 07/07/26', jockey: 'William Carson', trainer: 'Michael Wigham', owner: 'Carl Appleton & Pet…', badge: '', badgeBg: '', badgeColor: '', items: ['cp'], pos: '–', lengths: '', rowBg: 'white', nonRunner: false, lastRan: 'Ran (F) 5 days ago' },
+      { draw: 4, stall: 6, silkBg: '#1a3a7a', silkText: 'SD', name: 'SERENITY DREAM (IRE)', details: '5YO/C/G', weight: '9st 4lbs', form: '305621', rating: '70 (70)', pound: '', sampled: 'Sampled 22/08/25', jockey: 'Jack Doughty', trainer: 'Tony Carroll', owner: 'Eggselltrading Ltd', badge: '', badgeBg: '', badgeColor: '', items: ['cp'], pos: '–', lengths: '', rowBg: '#f8f8f8', nonRunner: false, lastRan: 'Ran (F) 20 days ago' },
+      { draw: 5, stall: 5, silkBg: '#5a2d82', silkText: 'DP', name: 'DONTSPOILASALE (IRE)', details: '6YO/B/G', weight: '9st 2lbs', form: '504606', rating: '66 (68)', pound: '', sampled: '', jockey: 'Finley Marsh', trainer: 'Jim & Suzi Best', owner: 'Mr John Joseph Sm…', badge: '', badgeBg: '', badgeColor: '', items: [], pos: '–', lengths: '', rowBg: 'white', nonRunner: false, lastRan: 'Ran (F) 16 days ago' },
+      { draw: 6, stall: 4, silkBg: '#c46a00', silkText: 'SM', name: 'STATE OF MADNESS (GB)', details: '5YO/B/G', weight: '9st 2lbs', form: '503452', rating: '68 (68)', pound: '', sampled: 'Sampled 16/10/25', jockey: 'Paddy Bradley', trainer: 'Mark Loughnane', owner: 'The Likely Lads & …', badge: '', badgeBg: '', badgeColor: '', items: [], pos: '–', lengths: '', rowBg: '#f8f8f8', nonRunner: false, lastRan: 'Ran (F) 44 days ago' },
+      { draw: 7, stall: 1, silkBg: '#1a6a4a', silkText: 'JJ', name: 'JUST JUMP (IRE)', details: '4YO/B/G', weight: '8st 10lbs', form: '050T15', rating: '(62)', pound: '', sampled: 'Sampled 22/06/26', jockey: 'Myla Coppins(5)', trainer: 'Tony Carroll', owner: 'Hrycko Carpentry Ltd', badge: '', badgeBg: '', badgeColor: '', items: ['cp'], pos: '–', lengths: '', rowBg: 'white', nonRunner: false, lastRan: 'Ran (F) 1 day ago' },
+    ],
+  };
+
+  selectRace = (i) => this.setState({ activeRaceIdx: i, savedNoteImg: this.loadNoteFor(i) });
+  loadNoteFor = (i) => { try { return localStorage.getItem('bha-racecard-note-' + i) || ''; } catch (e) { return ''; } };
+  setThumbRef = (el) => { if (el && this.state.savedNoteImg) el.src = this.state.savedNoteImg; };
+
+  toggleHideOpen = () => this.setState(s => ({ hideOpen: !s.hideOpen }));
+  toggleCol = (id) => this.setState(s => ({ hiddenCols: { ...s.hiddenCols, [id]: !s.hiddenCols[id] } }));
+
+  openEditView = () => this.setState({ editViewOpen: true, activeRaceIdx: 0, savedNoteImg: this.loadNoteFor(0) });
+  closeEditView = () => {
+    if (this.canvasEl) {
+      const blank = !this.canvasEl.getContext('2d').getImageData(0, 0, this.canvasEl.width, this.canvasEl.height).data.some(v => v !== 0);
+      if (!blank) {
+        const dataUrl = this.canvasEl.toDataURL();
+        try { localStorage.setItem('bha-racecard-note-' + this.state.activeRaceIdx, dataUrl); } catch (e) {}
+        this.setState({ editViewOpen: false, savedNoteImg: this.state.activeRaceIdx === 0 ? dataUrl : this.loadNoteFor(0) });
+        return;
+      }
+    }
+    this.setState({ editViewOpen: false, savedNoteImg: this.loadNoteFor(0) });
+  };
+  toggleAnnotating = () => this.setState(s => ({ annotating: !s.annotating }));
+  setToolPen = () => this.setState({ tool: 'pen', annotating: true });
+  setToolEraser = () => this.setState({ tool: 'eraser', annotating: true });
+  setColor = (c) => this.setState({ color: c, tool: 'pen', annotating: true });
+
+  setCanvasRef = (el) => {
+    if (!el) return;
+    const isNew = this.canvasEl !== el;
+    this.canvasEl = el;
+    const draw = () => {
+      const rect = el.getBoundingClientRect();
+      el.width = rect.width; el.height = rect.height;
+      const saved = this.loadNoteFor(this.state.activeRaceIdx);
+      if (saved) { const img = new Image(); img.onload = () => el.getContext('2d').drawImage(img, 0, 0, rect.width, rect.height); img.src = saved; }
+    };
+    if (isNew) { draw(); window.addEventListener('resize', draw); }
+    else if (el.dataset.race !== String(this.state.activeRaceIdx)) { draw(); }
+    el.dataset.race = String(this.state.activeRaceIdx);
+  };
+
+  startDraw = (e) => {
+    if (!this.canvasEl) return;
+    this.isDrawing = true;
+    const rect = this.canvasEl.getBoundingClientRect();
+    this.lastPt = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+  };
+  draw = (e) => {
+    if (!this.isDrawing || !this.canvasEl) return;
+    const ctx = this.canvasEl.getContext('2d');
+    const rect = this.canvasEl.getBoundingClientRect();
+    const pt = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    ctx.globalCompositeOperation = this.state.tool === 'eraser' ? 'destination-out' : 'source-over';
+    ctx.strokeStyle = this.state.color;
+    ctx.lineWidth = this.state.tool === 'eraser' ? 22 : 3;
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.beginPath(); ctx.moveTo(this.lastPt.x, this.lastPt.y); ctx.lineTo(pt.x, pt.y); ctx.stroke();
+    this.lastPt = pt;
+  };
+  endDraw = () => { this.isDrawing = false; };
+  clearCanvas = () => { if (this.canvasEl) this.canvasEl.getContext('2d').clearRect(0, 0, this.canvasEl.width, this.canvasEl.height); };
+  saveCanvas = () => {
+    if (this.canvasEl) {
+      const dataUrl = this.canvasEl.toDataURL();
+      try { localStorage.setItem('bha-racecard-note-' + this.state.activeRaceIdx, dataUrl); } catch (e) {}
+      if (this.state.activeRaceIdx === 0) this.setState({ savedNoteImg: dataUrl });
+    }
+    this.setState({ saveLabel: 'Saved ✓' });
+    setTimeout(() => this.setState({ saveLabel: 'Save' }), 1500);
+  };
+
+  togglePanel = () => this.setState(s => ({ panelOpen: !s.panelOpen }));
+  markAllRead = () => this.setState({ unread: { nonrunner: false, enquiry: false, prior: false } });
+
+  viewRunner = (key, draws) => {
+    this.setState(s => ({ unread: { ...s.unread, [key]: false }, highlightDraws: draws }));
+    const target = draws.length ? document.getElementById('run-row-' + draws[0]) : null;
+    if (target) {
+      let cont = target.parentElement;
+      while (cont && cont.scrollHeight <= cont.clientHeight + 1) cont = cont.parentElement;
+      if (cont) cont.scrollTop = target.offsetTop - cont.clientHeight / 2 + target.clientHeight / 2;
+    }
+    setTimeout(() => this.setState({ highlightDraws: [] }), 3000);
+  };
+
+  mkRow = (d) => {
+    const items = this.state.items || this.defaultItems();
+    const s = items[d.id];
+    const off = !s.on;
+    const cur = s.color || 'light';
+    const palette = [
+      { v: 'light', bg: '#e8edf6', text: '#1e3a6e', border: '#c9d4e8', title: 'Standard' },
+      { v: '#dc2626', bg: '#dc2626', text: 'white', border: '#dc2626', title: 'Red' },
+      { v: '#d97706', bg: '#d97706', text: 'white', border: '#d97706', title: 'Amber' },
+      { v: '#15803d', bg: '#15803d', text: 'white', border: '#15803d', title: 'Green' },
+      { v: '#2563eb', bg: '#2563eb', text: 'white', border: '#2563eb', title: 'Blue' },
+      { v: '#c2410c', bg: '#c2410c', text: 'white', border: '#c2410c', title: 'Orange' },
+      { v: '#7c3aed', bg: '#7c3aed', text: 'white', border: '#7c3aed', title: 'Purple' },
+      { v: '#0f766e', bg: '#0f766e', text: 'white', border: '#0f766e', title: 'Teal' },
+    ];
+    const curP = palette.find(p => p.v === cur) || palette[0];
+    return {
+      label: d.label, ab: s.ab, mode: s.mode, off, checked: s.on,
+      rowOpacity: off ? 0.45 : 1,
+      toggle: () => this.setItem(d.id, { on: !s.on }),
+      setAb: (e) => this.setItem(d.id, { ab: e.target.value }),
+      setMode: (e) => this.setItem(d.id, { mode: e.target.value }),
+      curBg: curP.bg, curColor: curP.text, curBorder: curP.border, curName: curP.title,
+      pickerOpen: this.state.colorPickerFor === d.id,
+      openPicker: () => this.setState(st => ({ colorPickerFor: st.colorPickerFor === d.id ? null : d.id })),
+      closePicker: () => this.setState({ colorPickerFor: null }),
+      swatches: palette.map(p => ({
+        bg: p.bg, textColor: p.text, borderCol: p.border, title: p.title, selected: p.v === cur,
+        select: () => { this.setItem(d.id, { color: p.v }); this.setState({ colorPickerFor: null }); },
+      })),
+    };
+  };
+
+  renderVals() {
+    const activeIdx = this.state.activeRaceIdx;
+    const race0Runners = [
+        { draw: 1, stall: 3, silkBg: '#2a7a2a', silkText: 'MD', name: 'MISTER DAYDREAM (IRE)', details: '5YO/B/G', weight: '10st 0lbs', form: '0502-00', rating: '56', pound: '', sampled: 'Sampled 21/05/25', jockey: 'Rhys Clutterbuck', trainer: 'Gary & Josh Moore', owner: 'Mr Niall Houlihan', badge: '', badgeBg: '', badgeColor: '', items: ['sr'], pos: '1st', lengths: '', rowBg: 'white', nonRunner: false },
+        { draw: 2, stall: 5, silkBg: '#cc2222', silkText: 'LP', name: 'LUNAR POWER (IRE)', details: '8YO/C/G', weight: '9st 13lbs', form: '065-560', rating: '43', pound: '', sampled: 'Sampled 27/08/25', jockey: 'Georgia Dobie', trainer: 'Laura Mongan', owner: 'Mrs L. J. Mongan', badge: '', badgeBg: '', badgeColor: '', items: ['cp'], pos: '7th', lengths: '6 lengths', rowBg: '#f8f8f8', nonRunner: false },
+        { draw: 3, stall: 2, silkBg: '#e8c830', silkText: 'MC', name: 'MOONLIT CLOUD (GB)', details: '8YO/B/F', weight: '9st 6lbs', form: '600-450', rating: '', pound: '£', sampled: 'Sampled 06/05/24', jockey: 'Robert Havlin', trainer: 'Dean Ivory', owner: 'Mr K. T. Ivory', badge: '', badgeBg: '', badgeColor: '', items: ['tt', 'hp'], pos: '3rd', lengths: '7 lengths', rowBg: 'white', nonRunner: false },
+        { draw: 4, stall: 9, silkBg: '#cc2222', silkText: 'NR', name: 'DOUGLAS DC (IRE)', details: '8YO/B/G', weight: '9st 5lbs', form: '250-005', rating: '44', pound: '', sampled: 'Sampled 06/11/25', jockey: 'Non Runner', trainer: 'Tony Carroll', owner: 'Mrs Susan Keable', badge: 'NR – Self Cert (Not Eaten Up)', badgeBg: '#555', badgeColor: 'white', items: ['b'], pos: '–', lengths: '', rowBg: '#f8f8f8', nonRunner: true },
+        { draw: 5, stall: 4, silkBg: '#1a3a7a', silkText: 'CZ', name: 'CEZARRO (IRE)', details: '4YO/B/G', weight: '9st 3lbs', form: '024463', rating: '46', pound: '', sampled: 'Sampled 20/05/26', jockey: 'David Probert', trainer: 'Max Young', owner: 'The Regal Eagles', badge: 'New Trainer', badgeBg: '#111', badgeColor: 'white', items: ['rh', 'mc'], pos: '8th', lengths: '11 lengths', rowBg: 'white', nonRunner: false },
+        { draw: 6, stall: 7, silkBg: '#5a2d82', silkText: 'HT', name: 'HAVANA TIDE (IRE)', details: '5YO/B/G', weight: '9st 2lbs', form: '034-120', rating: '48', pound: '', sampled: 'Sampled 14/04/26', jockey: 'Rory Blackwell', trainer: 'Nia Prendergast', owner: 'Havana Racing Ltd', badge: '', badgeBg: '', badgeColor: '', items: ['v', 'nb'], pos: '4th', lengths: '8 lengths', rowBg: '#f8f8f8', nonRunner: false },
+        { draw: 7, stall: 1, silkBg: '#c46a00', silkText: 'KB', name: 'KEMPTON BAY (GB)', details: '6YO/B/G', weight: '9st 0lbs', form: '556-430', rating: '41', pound: '', sampled: 'Sampled 02/03/26', jockey: 'Tom Ashcroft', trainer: 'Gerald Munn', owner: 'Mr D. J. Reece', badge: '', badgeBg: '', badgeColor: '', items: ['h'], pos: '5th', lengths: '9 lengths', rowBg: 'white', nonRunner: false },
+        { draw: 8, stall: 6, silkBg: '#1a6a4a', silkText: 'SR', name: 'SILVER REDOUBT (IRE)', details: '7YO/B/G', weight: '8st 13lbs', form: '000-563', rating: '39', pound: '', sampled: 'Sampled 18/02/26', jockey: 'Callum Wray', trainer: 'Fiona Hedley', owner: 'Redoubt Partnership', badge: '', badgeBg: '', badgeColor: '', items: ['tt', 'rh', 'wits'], pos: '6th', lengths: '10 lengths', rowBg: '#f8f8f8', nonRunner: false },
+        { draw: 9, stall: 8, silkBg: '#3a3a3a', silkText: 'MF', name: 'MARLOW FLYER (GB)', details: '4YO/B/F', weight: '8st 11lbs', form: '120-045', rating: '44', pound: '', sampled: 'Sampled 11/05/26', jockey: 'Ellis Frayne', trainer: 'Hugh Barrowman', owner: 'Mrs P. A. Lowther', badge: '', badgeBg: '', badgeColor: '', items: ['e'], pos: '2nd', lengths: '2 lengths', rowBg: 'white', nonRunner: false },
+        { draw: 10, stall: 10, silkBg: '#8a1a1a', silkText: 'BQ', name: 'BALLYQUIN LAD (IRE)', details: '5YO/B/G', weight: '8st 9lbs', form: '300-211', rating: '50', pound: '', sampled: 'Sampled 29/04/26', jockey: 'Sam Kilbane', trainer: 'Marcus Denby', owner: 'Ballyquin Bloodstock', badge: '', badgeBg: '', badgeColor: '', items: ['b1'], pos: '9th', lengths: '12 lengths', rowBg: '#f8f8f8', nonRunner: false },
+        { draw: 11, stall: 11, silkBg: '#2a4a8a', silkText: 'WC', name: 'WESTON COMMON (GB)', details: '6YO/B/G', weight: '8st 7lbs', form: '443-302', rating: '47', pound: '', sampled: 'Sampled 07/05/26', jockey: 'Owen Marsh', trainer: 'Kate Fennimore', owner: 'The Weston Syndicate', badge: '', badgeBg: '', badgeColor: '', items: ['rh'], pos: '10th', lengths: '14 lengths', rowBg: 'white', nonRunner: false },
+    ];
+    const runnersData = (activeIdx === 0 ? race0Runners : this.raceRunners[activeIdx] || race0Runners).map(r => ({ ...r }));
+    const decNotesByDraw = activeIdx === 0 ? {
+      5: [{ item: 'rh', text: 'Red hood to be worn in parade ring and to the start' }],
+      8: [
+        { item: 'rh', text: 'red hood down to the start' },
+        { item: 'wits', text: 'Tongue strap fitted at the stables — to be checked at the start, withdraw if it cannot be refitted' },
+      ],
+      11: [{ item: '', text: 'Please allow to walk to post in his own time — has been slow to load on his last two starts' }],
+    } : {};
+    const lastRanByDraw = activeIdx === 0 ? { 1: 'Ran (F) 10 days ago', 2: 'Ran (F) 18 days ago', 3: 'Ran (F) 18 days ago', 4: 'Ran (F) 41 days ago', 5: 'Ran (F) 12 days ago', 6: 'Ran (F) 22 days ago', 7: 'Ran (F) 9 days ago', 8: 'Ran (F) 31 days ago', 9: 'Ran (F) 15 days ago', 10: 'Ran (F) 27 days ago', 11: 'Ran (F) 20 days ago' } : {};
+    runnersData.forEach(r => { r.lastRan = r.lastRan || lastRanByDraw[r.draw] || ''; });
+
+    const commentsByDraw = activeIdx !== 0 ? {} : {
+      1: [{ type: 'performance', runsAgo: 5, head: '23/09/25 · 2:45 · LIN', lines: [{ label: 'Race Performance', text: 'No explanation from trainer' }] }],
+      2: [
+        { type: 'performance', runsAgo: 2, head: '06/05/26 · 6:30 · KMP', lines: [{ label: 'Race Performance', text: 'Hung left-handed' }] },
+        { type: 'starters', runsAgo: 7, head: '11/10/25 · 3:15 · SOU', lines: [{ label: 'Starters Report', text: 'FSB — second offence at start' }] },
+      ],
+      3: [
+        { type: 'performance', runsAgo: 4, head: '07/11/25 · 3:35', lines: [{ label: 'Race Performance', text: 'Improvement in form — PEPPER flag' }] },
+        { type: 'behavioural', runsAgo: 11, cleanRunsSince: 11, head: '18/08/25 · 4:20 · BRI', lines: [{ label: 'Behavioural', text: 'Reared leaving stalls, required blindfold' }] },
+      ],
+      4: [{ type: 'equipment', runsAgo: 1, head: '17/04/26 · 2:43 · WOL', lines: [{ label: 'Equipment', text: 'Lost left-fore shoe during race' }] }],
+      5: [{ type: 'interference', runsAgo: 2, head: '05/06/26 · 3:00 · MUS', lines: [{ label: 'Interference', text: 'Suffered interference in running' }] }],
+      6: [{ type: 'performance', runsAgo: 1, head: '02/07/26 · 4:55 · KMP', lines: [{ label: 'Race Performance', text: 'Hung left-handed' }] }],
+      7: [{ type: 'performance', runsAgo: 6, head: '29/09/25 · 3:31', lines: [{ label: 'Race Performance', text: 'Improvement in form — PEPPER flag' }] }],
+      8: [{ type: 'welfare', runsAgo: 1, head: '29/06/26 · 7:30 · WDR', lines: [{ label: 'Welfare', text: 'Bled during race — bleeder flag' }] }],
+    };
+    runnersData.forEach(r => {
+      r.comments = (commentsByDraw[r.draw] || []).map((c, i) => {
+        const key = r.draw + ':' + i;
+        if (this.state.deletedComments[key]) return null;
+        const kept = this.filterComment(c);
+        if (!kept) return null;
+        kept.del = () => this.deleteComment(key, r.name, (c.lines || []).map(ln => ln.label + ' — ' + ln.text).join('; '));
+        return kept;
+      }).filter(Boolean);
+    });
+
+    const notesOn = this.state.decNotesOn;
+    runnersData.forEach(r => {
+      const raw = notesOn ? (decNotesByDraw[r.draw] || []) : [];
+      const open = this.state.noteOverrides[r.draw] !== undefined ? this.state.noteOverrides[r.draw] : this.state.decNotesExpanded;
+      r.hasNotes = raw.length > 0;
+      r.notesOpen = r.hasNotes && open;
+      r.noteToggleLabel = (open ? '▴ ' : '▾ ') + (raw.length > 1 ? raw.length + ' dec notes' : 'Dec note');
+      r.toggleNotes = () => this.setState(s => ({ noteOverrides: { ...s.noteOverrides, [r.draw]: !(s.noteOverrides[r.draw] !== undefined ? s.noteOverrides[r.draw] : s.decNotesExpanded) } }));
+      r.notes = raw.map(n => {
+        const chip = n.item ? this.chipFor(n.item) : null;
+        return {
+          text: n.text,
+          hasTag: !!chip,
+          tagText: chip ? chip.text : '',
+          tagBg: chip ? chip.bg : '#eef',
+          tagColor: chip ? chip.color : '#333',
+          tagBorder: chip ? chip.border : '#dbe3ef',
+        };
+      });
+    });
+
+    const dispMode = this.state.displayMode || 'column';
+    const expandedRows = this.state.expandedRows || {};
+    runnersData.forEach(r => {
+      r.commentCount = (r.comments || []).length;
+      r.noComments = r.commentCount === 0;
+      r.expanded = r.commentCount > 0 && (expandedRows[r.draw] !== undefined ? expandedRows[r.draw] : (dispMode === 'icon' && this.state.iconCommentsExpanded));
+      r.toggleExpand = () => this.toggleExpandRow(r.draw);
+      r.iconBg = r.expanded ? '#dbe4f5' : '#f3f3f3';
+      r.showCommentIcon = dispMode === 'icon' && r.commentCount > 0;
+      r.rowClick = undefined;
+      r.rowCursor = 'default';
+    });
+
+    const rangeOpts = [['last1', '1 run'], ['last3', '3 runs'], ['last10', '10 runs'], ['all', 'All time']];
+    const typeDefs = [
+      { id: 'behavioural', label: 'Behavioural — starters' },
+      { id: 'welfare', label: 'Welfare' },
+      { id: 'performance', label: 'Race performance' },
+      { id: 'equipment', label: 'Equipment' },
+      { id: 'interference', label: 'Interference & incidents' },
+      { id: 'starters', label: 'Starters report' },
+    ];
+    const cs = this.state.commentSettings;
+    const fteTypes = typeDefs.map(d => {
+      const s = cs[d.id];
+      return {
+        ...d, on: s.on, showRanges: s.on, isBehavioural: d.id === 'behavioural' && s.on, autoFade: !!s.autoFade,
+        toggle: () => this.toggleType(d.id),
+        toggleAutoFade: this.toggleAutoFade,
+        ranges: rangeOpts.map(([v, label]) => ({ label, checked: s.range === v, name: 'range-' + d.id, select: () => this.setRange(d.id, v) })),
+      };
+    });
+    const displayOptions = [
+      { value: 'column', label: 'Dedicated column', note: 'Always-visible column in the race table.' },
+      { value: 'icon', label: 'Icon on the row', note: 'A speech-bubble icon next to the horse when it has a comment — click to expand.' },
+    ].map(o => ({ ...o, checked: this.state.displayMode === o.value, select: () => this.setDisplay(o.value), showIconSub: o.value === 'icon' && this.state.displayMode === 'icon' }));
+
+    const colDefs = [
+      { id: 'draw', label: 'Draw & stall', width: '54px', head: '' },
+      { id: 'silks', label: 'Silks', width: '64px', head: '' },
+      { id: 'lastRun', label: 'Last run', width: '110px' },
+      { id: 'connections', label: 'Connections', width: 'minmax(140px,1fr)' },
+      { id: 'comments', label: 'Horse comments', width: '140px' },
+      { id: 'status', label: 'Status', width: '130px' },
+      { id: 'result', label: 'Result', width: '90px' },
+    ];
+    const isVisible = id => !this.state.hiddenCols[id];
+    const cw = this.state.colWidths;
+    const w = id => {
+      if (!isVisible(id)) return null;
+      if (cw[id]) return cw[id] + 'px';
+      if (id === 'horse') return 'minmax(170px,1.2fr)';
+      return colDefs.find(c => c.id === id).width;
+    };
+    const order = ['draw', 'silks', 'horse', 'lastRun', 'connections', 'comments', 'status', 'result'];
+    const gridCols = order.map(w).concat(['44px']).filter(Boolean).join(' ');
+    const hideColumns = colDefs.map(c => ({ label: c.label, visible: isVisible(c.id), toggle: () => this.toggleCol(c.id) }));
+    const headerCols = order.filter(isVisible).map(id => {
+      const def = id === 'horse' ? { id: 'horse', head: 'Horse' } : colDefs.find(c => c.id === id);
+      return { id, head: def.head !== undefined ? def.head : def.label, startResize: (e) => this.startResize(id, e) };
+    });
+
+    const previewChips = ['b1', 'tt', 'rh', 'e', 'sr', 'hp'].map(this.chipFor).filter(Boolean);
+
+    return {
+      mainRaceTabs: this.races.map((rc, i) => ({
+        label: rc.time,
+        select: () => this.selectRace(i),
+        bg: i === activeIdx ? '#1e3a6e' : 'white',
+        color: i === activeIdx ? 'white' : '#444',
+        borderColor: i === activeIdx ? '#dc2626' : 'transparent',
+      })),
+      activeRaceHeaderTitle: this.races[activeIdx].time + ' – ' + this.races[activeIdx].name + ' (CLASS ' + this.races[activeIdx].classNum + ')',
+      activeRaceTimeLabel: this.races[activeIdx].time + ' PM',
+      hideOpen: this.state.hideOpen,
+      hideButtonBorder: this.state.hideOpen ? '#1e3a6e' : '#ccc',
+      toggleHideOpen: this.toggleHideOpen,
+      hideColumns,
+      gridCols,
+      showDraw: isVisible('draw'),
+      showSilks: isVisible('silks'),
+      showStatus: isVisible('status'),
+      showResult: isVisible('result'),
+      showLastRun: isVisible('lastRun'),
+      showConnections: isVisible('connections'),
+      showComments: isVisible('comments'),
+      commentsModeColumn: dispMode === 'column',
+      commentsModeIcon: dispMode === 'icon',
+      iconCommentsDefault: this.state.iconCommentsExpanded ? 'expanded' : 'collapsed',
+      setIconCommentsDefault: this.setIconCommentsDefault,
+      stopProp: this.stopProp,
+      fteTypes,
+      displayOptions,
+      firstRun: this.state.firstRun,
+      fixtureMenuOpen: this.state.fixtureMenuOpen,
+      raceMenuOpen: this.state.raceMenuOpen,
+      linksMenuOpen: this.state.linksMenuOpen,
+      toggleFixtureMenu: this.toggleFixtureMenu,
+      toggleRaceMenu: this.toggleRaceMenu,
+      toggleLinksMenu: this.toggleLinksMenu,
+      closeMenus: this.closeMenus,
+      fixtureActions: this.mkActions(['Add Fixture Comment', 'Update Stewards', 'Sampling Requests', 'Print Racecards', 'Print Report', 'Fixture suspension dates']),
+      raceActions: this.mkActions(['Add Race Comment', 'False Start', 'Void Race', 'Late Race', 'Left Parade Ring', 'Requested Delay']),
+      externalLinks: this.mkActions(['Rico', 'Racing Admin', 'Raceday Team Briefing Document', 'Abandonment decision form', 'Whip Review Committee Referral Form', 'Medical Compliance']),
+      coachOpen: this.state.coachOpen,
+      dismissCoach: this.dismissCoach,
+      coachOpenPanel: this.coachOpenPanel,
+      protoCoach: this.protoCoach,
+      customiseBtnBorder: this.state.coachOpen ? '#1e3a6e' : '#ccc',
+      raceInfoOpen: this.state.raceInfoOpen,
+      toggleRaceInfo: this.toggleRaceInfo,
+      raceInfoLabel: this.state.raceInfoOpen ? '▴ Race info' : '▾ Race info',
+      raceInfoRows: [
+        { label: 'For:', value: this.races[activeIdx].forText, valueColor: '#333' },
+        { label: 'Rate:', value: this.races[activeIdx].rateText, valueColor: '#333' },
+        { label: 'Type:', value: 'Flat', valueColor: '#333' },
+        { label: 'Class:', value: this.races[activeIdx].classNum, valueColor: '#333' },
+        { label: 'Distance:', value: this.races[activeIdx].distance, valueColor: '#333' },
+        { label: 'TV:', value: 'Not Covered', valueColor: '#333' },
+        { label: 'Total Value:', value: this.races[activeIdx].valueText, valueColor: '#1e3a6e' },
+        { label: 'Going:', value: this.races[activeIdx].going, valueColor: '#333' },
+      ],
+      headerCols,
+      decNotesOn: this.state.decNotesOn,
+      toggleDecNotes: this.toggleDecNotes,
+      decNotesDefault: this.state.decNotesExpanded ? 'expanded' : 'collapsed',
+      setDecNotesDefault: this.setDecNotesDefault,
+      decNotesOff: !this.state.decNotesOn,
+      customiseSection: this.state.customiseSection || '',
+      setSection: this.setSection,
+      sectionComments: this.state.customiseSection === 'comments',
+      sectionPrivileges: this.state.customiseSection === 'privileges',
+      sectionNone: !this.state.firstRun && !this.state.customiseSection,
+      sectionSelectBorder: this.state.customiseSection ? '#ccc' : '#1e3a6e',
+      sectionSelectGlow: this.state.customiseSection ? 'none' : '0 0 0 3px rgba(30,58,110,0.15)',
+      introOpen: this.state.introOpen,
+      introSetup: this.introSetup,
+      introSkip: this.introSkip,
+      enquiryOpen: this.state.enquiryOpen,
+      closeEnquiry: this.closeEnquiry,
+      saveEnquiry: this.saveEnquiry,
+      enquirySubject: this.state.enquirySubject,
+      setEnquirySubject: this.setEnquirySubject,
+      enquiryCategory: this.state.enquiryCategory,
+      setEnquiryCategory: this.setEnquiryCategory,
+      enquiryCategoryOptions: this.enquiryCategoryDefs,
+      enquiryOffenceQuery: this.state.enquiryOffenceQuery,
+      setEnquiryOffenceQuery: this.setEnquiryOffenceQuery,
+      openEnquiryOffence: this.openEnquiryOffence,
+      closeEnquiryOffence: this.closeEnquiryOffence,
+      clearEnquiryOffence: this.clearEnquiryOffence,
+      enquiryOffenceKeyDown: this.enquiryOffenceKeyDown,
+      enquirySaveBg: this.state.enquiryOffenceSelectedId ? '#1e3a6e' : '#a9b3d6',
+      ...(() => {
+        const q = (this.state.enquiryOffenceQuery || '').trim();
+        const ql = q.toLowerCase();
+        const matched = this.offenceDefs.map(o => {
+          const codeMatch = !!ql && o.code.toLowerCase().includes(ql);
+          const feeMatch = !!ql && !!o.feeCode && o.feeCode.toLowerCase().includes(ql);
+          const textMatch = !!ql && o.text.toLowerCase().includes(ql);
+          if (ql && !codeMatch && !feeMatch && !textMatch) return null;
+          return {
+            ...o, hasFee: !!o.feeCode,
+            codeSplit: codeMatch ? this.splitHighlight(o.code, q) : { before: o.code, match: '', after: '' },
+            feeSplit: o.feeCode ? (feeMatch ? this.splitHighlight(o.feeCode, q) : { before: o.feeCode, match: '', after: '' }) : null,
+            textSplit: textMatch ? this.splitHighlight(o.text, q) : { before: o.text, match: '', after: '' },
+          };
+        }).filter(Boolean);
+        const groups = [];
+        let idx = 0;
+        ['F', 'G'].forEach(fam => {
+          const items = matched.filter(m => m.family === fam).map(it => { const withIdx = { ...it, flatIndex: idx }; idx++; return withIdx; });
+          if (items.length) groups.push({ family: fam, familyLabel: fam + ' RULES', items });
+        });
+        const flat = groups.reduce((acc, g) => acc.concat(g.items), []);
+        this._offenceFlat = flat;
+        const activeIdx = flat.length ? Math.min(this.state.enquiryOffenceActive || 0, flat.length - 1) : -1;
+        groups.forEach(g => g.items.forEach(it => {
+          it.isActive = it.flatIndex === activeIdx;
+          it.rowBg = it.isActive ? '#eef1f8' : 'white';
+          it.select = () => this.selectEnquiryOffence(it.id);
+          it.viewRule = (e) => this.viewOffenceRule(e, it.code);
+        }));
+        const selected = this.state.enquiryOffenceSelectedId ? this.offenceDefs.find(o => o.id === this.state.enquiryOffenceSelectedId) : null;
+        return {
+          enquiryOffenceGroups: groups,
+          enquiryOffenceNoMatches: !!q && flat.length === 0,
+          enquiryOffenceHasSelected: !!selected,
+          enquiryOffenceNotSelected: !selected,
+          enquiryOffenceSelected: selected,
+          enquiryOffenceOpen: this.state.enquiryOffenceOpen && !selected,
+      viewSelectedOffenceRule: this.viewSelectedOffenceRule,
+      openRulesDrawer: () => this.openRulesDrawer('', ''),
+      closeRulesDrawer: this.closeRulesDrawer,
+      rulesOpen: this.state.rulesOpen,
+      rulesQuery: this.state.rulesQuery,
+      setRulesQuery: this.setRulesQuery,
+      ...(() => {
+        const rq = (this.state.rulesQuery || '').trim().toLowerCase();
+        const matches = !rq ? this.ruleDefs : this.ruleDefs.filter(r =>
+          r.code.toLowerCase().includes(rq) || r.title.toLowerCase().includes(rq) || r.keywords.toLowerCase().includes(rq));
+        const main = matches.filter(r => !r.appendix).map(r => ({ ...r, viewFull: (e) => e.preventDefault() }));
+        const related = matches.filter(r => r.appendix).map(r => ({ ...r, viewFull: (e) => e.preventDefault() }));
+        return {
+          rulesResults: main,
+          rulesRelated: related,
+          rulesNoMatches: matches.length === 0,
+          rulesResultsLabel: matches.length + (matches.length === 1 ? ' RESULT' : ' RESULTS') + (this.state.rulesContext ? (' · ' + this.state.rulesContext.toUpperCase()) : ''),
+        };
+      })(),
+        };
+      })(),
+      enquirySubjectOptions: this.state.enquiryRow ? [
+        { value: 'jockey', label: 'Jockey - ' + this.state.enquiryRow.jockey },
+        { value: 'trainer', label: 'Trainer - ' + this.state.enquiryRow.trainer },
+        { value: 'horse', label: 'Horse - ' + this.state.enquiryRow.name },
+      ] : [],
+      enquirySubjectName: (() => {
+        const r = this.state.enquiryRow;
+        if (!r) return '';
+        const name = this.state.enquirySubject === 'jockey' ? r.jockey : this.state.enquirySubject === 'trainer' ? r.trainer : r.name;
+        return (name || '').toUpperCase();
+      })(),
+      enquiryCategoryLabel: ((this.enquiryCategoryDefs.find(c => c.value === this.state.enquiryCategory) || {}).label || '').toUpperCase() + ' STAGE',
+      ctOpen: !!this.state.ctStep,
+      ctStep1: this.state.ctStep === 'intro',
+      ctStep2: this.state.ctStep === 'configure',
+      ctStep3: this.state.ctStep === 'display',
+      ctStep4: this.state.ctStep === 'review',
+      ctStepLabel: this.state.ctStep ? ('Step ' + (this.ctOrder.indexOf(this.state.ctStep) + 1) + ' of ' + this.ctOrder.length) : '',
+      ctNext: this.ctNext,
+      ctBack: this.ctBack,
+      ctSkip: this.ctSkip,
+      ctFinish: this.ctFinish,
+      ctTypes: (() => {
+        const rangeOpts = [['last1', '1 run'], ['last3', '3 runs'], ['last10', '10 runs'], ['all', 'All time']];
+        const defs = [
+          { id: 'behavioural', label: 'Behavioural — starters', note: 'Unruly at start, refused stalls, required blindfold — shows a tendency.' },
+          { id: 'welfare', label: 'Welfare', note: 'Vet concerns, distress, breathing checked, bleeder flag.' },
+          { id: 'performance', label: 'Race performance', note: 'Slowly away, hung left/right, pulled hard, ran green — usually one-off.' },
+          { id: 'equipment', label: 'Equipment', note: 'Lost shoe, first-time tongue tie, tack issues.' },
+          { id: 'interference', label: 'Interference & incidents', note: 'Suffered/caused interference, fell, unseated.' },
+        ];
+        const cs2 = this.state.commentSettings;
+        return defs.map(d => {
+          const s = cs2[d.id];
+          return {
+            ...d, on: s.on, showRanges: s.on, isBehavioural: d.id === 'behavioural' && s.on, autoFade: !!s.autoFade,
+            toggle: () => this.toggleType(d.id),
+            toggleAutoFade: this.toggleAutoFade,
+            ranges: rangeOpts.map(([v, label]) => ({ label, checked: s.range === v, name: 'ct-range-' + d.id, select: () => this.setRange(d.id, v) })),
+          };
+        });
+      })(),
+      ctReviewRows: (() => {
+        const rangeNames = { last1: 'Last run', last3: 'Last 3 runs', last10: 'Last 10 runs', all: 'All time' };
+        const cs2 = this.state.commentSettings;
+        const rows = [
+          ['Behavioural — starters', 'behavioural'], ['Welfare', 'welfare'], ['Race performance', 'performance'], ['Equipment', 'equipment'], ['Interference & incidents', 'interference']
+        ].map(([label, id]) => {
+          const s = cs2[id];
+          let value = s.on ? rangeNames[s.range] : 'Off';
+          if (id === 'behavioural' && s.on && s.autoFade) value += ' · auto-fade after ~10 clean runs';
+          return { label, value };
+        });
+        rows.push({ label: 'Starters reports', value: 'Always shown — permanent record' });
+        rows.push({ label: 'Display', value: { column: 'Dedicated column', icon: 'Icon on the row' }[this.state.displayMode] });
+        return rows;
+      })(),
+      ctPreviewComments: [
+        { type: 'equipment', runsAgo: 1, head: '09/07/26 · 2:43 · WOL', label: 'Equipment', text: 'Lost left-fore shoe during race' },
+        { type: 'performance', runsAgo: 1, head: '09/07/26 · 2:43 · WOL', label: 'Race Performance', text: 'Slowly away' },
+        { type: 'welfare', runsAgo: 2, head: '13/06/26 · 4:15 · LIN', label: 'Welfare', text: 'Bled during race — bleeder flag' },
+        { type: 'behavioural', runsAgo: 12, cleanRunsSince: 12, head: '28/08/25 · 3:00 · MUS', label: 'Behavioural', text: 'Unruly at start, required blindfold' },
+        { type: 'performance', runsAgo: 5, head: '15/11/25 · 2:45 · LIN', label: 'Race Performance', text: 'No explanation from trainer' },
+        { type: 'interference', runsAgo: 2, head: '14/05/26 · 6:30 · KMP', label: 'Interference', text: 'Suffered interference in the straight' },
+        { type: 'starters', runsAgo: 20, head: '02/03/24 · 3:50 · SOU', label: 'Starters Report', text: 'FSB — second offence at start' },
+      ].map(this.filterCtPreview).filter(Boolean),
+      privOpen: this.state.privOpen,
+      openPriv: this.openPriv,
+      protoFirstTime: this.protoFirstTime,
+      protoFirstTimeComments: this.protoFirstTimeComments,
+      closePriv: this.closePriv,
+      privDoneLabel: this.state.firstRun ? 'Save my card' : 'Done',
+      firstRunNo: !this.state.firstRun,
+      privPosStyle: this.state.firstRun ? 'top: 50%; left: 50%; transform: translate(-50%,-50%); width: 1120px; max-width: 96vw; max-height: 90vh; overflow: hidden;' : 'top: 0; right: 0; width: 560px; max-width: 96vw; height: 100vh;',
+      privShadow: this.state.firstRun ? '0 20px 60px rgba(0,0,0,0.35)' : '-8px 0 28px rgba(0,0,0,0.25)',
+      privRadius: this.state.firstRun ? '6px' : '0',
+      privGridCols: this.state.firstRun ? '1fr 1fr' : '1fr',
+      confirmReset: this.state.confirmReset,
+      notConfirmReset: !this.state.confirmReset,
+      askReset: this.askReset,
+      cancelReset: this.cancelReset,
+      doReset: this.doReset,
+      declaredRows: this.declaredDefs.map(this.mkRow),
+      privRows: this.privDefs.map(this.mkRow),
+      previewChips,
+      previewHasChips: previewChips.length > 0,
+      previewEmpty: previewChips.length === 0,
+      toast: this.state.toast,
+      editViewOpen: this.state.editViewOpen,
+      openEditView: this.openEditView,
+      closeEditView: this.closeEditView,
+      allRunnersCount: runnersData.length,
+      allRunners: runnersData,
+      activeRaceTitle: this.races[this.state.activeRaceIdx].time + ' – ' + this.races[this.state.activeRaceIdx].name,
+      raceTabs: this.races.map((rc, i) => ({
+        label: rc.time,
+        select: () => this.selectRace(i),
+        bg: i === this.state.activeRaceIdx ? '#1e3a6e' : 'transparent',
+        color: i === this.state.activeRaceIdx ? 'white' : '#a9b8d8',
+        borderColor: i === this.state.activeRaceIdx ? '#dc2626' : 'transparent'
+      })),
+      setCanvasRef: this.setCanvasRef,
+      startDraw: this.startDraw,
+      draw: this.draw,
+      endDraw: this.endDraw,
+      canvasPointerEvents: this.state.annotating ? 'auto' : 'none',
+      toggleAnnotating: this.toggleAnnotating,
+      annotatingBg: this.state.annotating ? '#1e3a6e' : '#eee',
+      annotatingColor: this.state.annotating ? 'white' : '#333',
+      annotatingLabel: this.state.annotating ? 'Annotating' : 'Paused',
+      setToolPen: this.setToolPen,
+      setToolEraser: this.setToolEraser,
+      penToolBg: this.state.tool === 'pen' ? '#e6ecf7' : 'white',
+      eraserToolBg: this.state.tool === 'eraser' ? '#e6ecf7' : 'white',
+      colorSwatches: ['#111111', '#1d4ed8', '#dc2626', '#16794f', '#94a3b8', '#475569'].map(v => ({
+        value: v, border: this.state.color === v ? '2px solid #1e3a6e' : '1px solid #ccc', select: () => this.setColor(v)
+      })),
+      clearCanvas: this.clearCanvas,
+      saveCanvas: this.saveCanvas,
+      saveLabel: this.state.saveLabel,
+      savedNoteImg: this.state.savedNoteImg,
+      setThumbRef: this.setThumbRef,
+      panelOpen: this.state.panelOpen,
+      panelTransform: this.state.panelOpen ? '0' : '-100%',
+      mainMarginRight: this.state.panelOpen ? '356px' : '36px',
+      stripArrow: this.state.panelOpen ? '◂' : '▸',
+      hasUnread: Object.values(this.state.unread).some(Boolean),
+      togglePanel: this.togglePanel,
+      markAllRead: this.markAllRead,
+      notifications: [
+        { key: 'nonrunner', icon: '⊘', label: 'Non-runner', color: '#1e3a6e', text: 'R3 — No.4 Douglas DC declared a non-runner. Self Cert (Not Eaten Up). 14:21.', time: '14:21', unread: this.state.unread.nonrunner, view: () => this.viewRunner('nonrunner', [4]) },
+        { key: 'enquiry', icon: '⚑', label: 'Enquiry opened', color: '#dc2626', text: 'R3 — No.3 Moonlit Cloud & No.5 Cezarro. Possible interference in the straight. Jockeys being called in.', time: '14:19', unread: this.state.unread.enquiry, view: () => this.viewRunner('enquiry', [3, 5]) },
+        { key: 'prior', icon: '△', label: 'Prior offence', color: '#1e3a6e', text: 'Rhys Clutterbuck — 2 prior whip warnings this season. Third offence threshold applies.', time: '14:20', unread: this.state.unread.prior, view: () => this.viewRunner('prior', [1]) },
+      ],
+      toastUndo: this.state.toastUndo,
+      undoDelete: this.undoDelete,
+      removedComments: Object.entries(this.state.deletedComments).map(([key, info]) => ({
+        key, horseName: info.horseName, text: info.text, restore: () => this.restoreComment(key),
+      })),
+      removedCommentsCount: Object.keys(this.state.deletedComments).length,
+      removedCommentsAny: Object.keys(this.state.deletedComments).length > 0,
+      runners: runnersData.map(r => {
+        const chips = (r.items || []).map(this.chipFor).filter(Boolean);
+        return {
+          ...r, chips, hasChips: chips.length > 0, highlighted: this.state.highlightDraws.includes(r.draw),
+          menuOpen: this.state.rowMenuDraw === r.draw,
+          toggleMenu: () => this.toggleRowMenu(r.draw),
+          actions: [
+            { label: 'Add Enquiry', disabled: false, color: '#111', cursor: 'pointer', run: () => this.openEnquiry(r) },
+            ...this.mkActions([
+              'Add Comment', 'Sampling Request',
+              { label: 'Edit Non-Runner', disabled: !r.nonRunner },
+              { label: 'Edit Withdrawn', disabled: true },
+              { label: 'Jockey Change', disabled: true },
+              { label: 'Jockey Change History', disabled: true },
+            ])
+          ]
+        };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>
